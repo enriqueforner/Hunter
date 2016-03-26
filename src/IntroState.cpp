@@ -27,9 +27,9 @@ IntroState::enter ()
   _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
   _viewport->setBackgroundColour(Ogre::ColourValue(1.0, 1.0, 1.0));
   
-  //IntroScene* iS = new IntroScene(_sceneMgr);
-  //iS-> crearMenuInicioCEGUI();
-  //iS-> crearWorld();
+  IntroScene* iS = new IntroScene(_sceneMgr);
+  iS-> crearMenuInicioCEGUI();
+  iS-> crearWorld();
   _exitGame = false;
 }
 
@@ -139,6 +139,11 @@ CEGUI::MouseButton IntroState::convertMouseButton(OIS::MouseButtonID id)
       ceguiId = CEGUI::LeftButton;
     }
   return ceguiId;
+}
+
+bool IntroState::exitButtonC(const CEGUI::EventArgs& e){
+    _exitGame = true;
+    return true; 
 }
 
 

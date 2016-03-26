@@ -25,6 +25,8 @@
 #include <OIS/OIS.h>
 
 #include "GameState.h"
+#include "IntroScene.h"
+
 #include <CEGUI.h>
 #include <RendererModules/Ogre/Renderer.h>
 
@@ -53,6 +55,8 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
   static IntroState& getSingleton ();
   static IntroState* getSingletonPtr ();
 
+  bool exitButtonC(const CEGUI::EventArgs& e);
+
  protected:
   Ogre::Root* _root;
   Ogre::SceneManager* _sceneMgr;
@@ -62,7 +66,6 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
   void loadCEGUI();
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
   
-  int _timesCreated;
   bool _exitGame;
 
   CEGUI::OgreRenderer* renderer;
