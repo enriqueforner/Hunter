@@ -1,21 +1,49 @@
+
 #include "PlayState.h"
+
+#include "Shapes/OgreBulletCollisionsTrimeshShape.h"  
+#include "Shapes/OgreBulletCollisionsSphereShape.h" 
+#include "Utils/OgreBulletCollisionsMeshToShapeConverter.h"
+
 #include "PauseState.h"
 
-#include "Shapes/OgreBulletCollisionsConvexHullShape.h"
-#include "Shapes/OgreBulletCollisionsTrimeshShape.h"    
-#include "Utils/OgreBulletCollisionsMeshToShapeConverter.h"
-#include "OgreBulletCollisionsRay.h"
 
 template<> PlayState* Ogre::Singleton<PlayState>::msSingleton = 0;
 
 
 PlayState::PlayState(){
-  /*//COGER RATON Y TECLADO
+  //COGER RATON Y TECLADO
 
   //_keyboard =;
   //_mouse = ;
 
-  //**COSICAS DE FISICAS 1**
+
+
+
+}
+
+PlayState::~PlayState(){}
+
+void
+PlayState::enter ()
+{
+  _root = Ogre::Root::getSingletonPtr();
+
+  // Se recupera el gestor de escena y la cámara.
+  _sceneMgr = _root->getSceneManager("SceneManager");
+  _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
+  _camera = _sceneMgr->getCamera("IntroCamera");
+  _camera->setPosition(Ogre::Vector3(5,20,20));
+  _camera->lookAt(Ogre::Vector3(0,0,0));
+  _camera->setNearClipDistance(5);
+  _camera->setFarClipDistance(10000);
+  _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
+  // Nuevo background colour.
+  _viewport->setBackgroundColour(Ogre::ColourValue(0.0, 0.0, 1.0));
+  double width = _viewport->getActualWidth();
+  double height = _viewport->getActualHeight();
+  _camera->setAspectRatio(width / height);
+  //_viewport->setBackgroundColour(Ogre::ColourValue(1.0, 1.0, 1.0));
 
   _numEntities = 0;    // Numero de Shapes instanciadas
   _timeLastObject = 0; // Tiempo desde que se añadio el ultimo objeto
@@ -26,7 +54,6 @@ PlayState::PlayState(){
   SceneNode *node = _sceneMgr->getRootSceneNode()->
     createChildSceneNode("debugNode", Vector3::ZERO);
   node->attachObject(static_cast <SimpleRenderable *>(_debugDrawer));
-
   // Creacion del mundo (definicion de los limites y la gravedad) ---
   AxisAlignedBox worldBounds = AxisAlignedBox (
     Vector3 (-10000, -10000, -10000), 
@@ -39,22 +66,8 @@ PlayState::PlayState(){
   _world->setShowDebugShapes (false);  // Muestra los collision shapes
 
   // Creacion de los elementos iniciales del mundo
-  CreateInitialWorld();*/
-}
-
-PlayState::~PlayState(){}
-
-void
-PlayState::enter ()
-{
-  _root = Ogre::Root::getSingletonPtr();
-
-  // Se recupera el gestor de escena y la cámara.
-  _sceneMgr = _root->getSceneManager("SceneManager");
-  _camera = _sceneMgr->getCamera("IntroCamera");
-  _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
-  // Nuevo background colour.
-  _viewport->setBackgroundColour(Ogre::ColourValue(0.0, 0.0, 1.0));
+  
+  CreateInitialWorld();
 
   _exitGame = false;
 }
@@ -186,10 +199,13 @@ void PlayState::CreateInitialWorld() {
     (Ogre::Vector3(0,1,0), 0);   // Vector normal y distancia
   OgreBulletDynamics::RigidBody *rigidBodyPlane = new 
     OgreBulletDynamics::RigidBody("rigidBodyPlane", _world);
-
+  
   // Creamos la forma estatica (forma, Restitucion, Friccion) ------
   rigidBodyPlane->setStaticShape(Shape, 0.1, 0.8); 
+  std::cout << "Hola" << std::endl;
   
   // Anadimos los objetos Shape y RigidBody ------------------------
-  _shapes.push_back(Shape);      _bodies.push_back(rigidBodyPlane);
+  _shapes.push_back(Shape);      
+  _bodies.push_back(rigidBodyPlane);
+
 }
