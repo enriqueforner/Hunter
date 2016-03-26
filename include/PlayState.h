@@ -26,10 +26,26 @@
 
 #include "GameState.h"
 
+#include <CEGUI.h>
+#include <RendererModules/Ogre/Renderer.h>
+
+#include <OgreOverlaySystem.h>
+#include <OgreOverlayElement.h>
+#include <OgreOverlayManager.h>
+
+#include <OgreBulletDynamicsRigidBody.h>
+#include <Shapes/OgreBulletCollisionsStaticPlaneShape.h>
+#include <Shapes/OgreBulletCollisionsBoxShape.h>
+
+using namespace Ogre;
+using namespace OgreBulletCollisions;
+using namespace OgreBulletDynamics;
+
 class PlayState : public Ogre::Singleton<PlayState>, public GameState
 {
  public:
-  PlayState () {}
+  PlayState ();
+  ~PlayState ();
 
   void enter ();
   void exit ();
@@ -46,6 +62,9 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   bool frameStarted (const Ogre::FrameEvent& evt);
   bool frameEnded (const Ogre::FrameEvent& evt);
 
+  CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
+  void CreateInitialWorld();
+
   // Heredados de Ogre::Singleton.
   static PlayState& getSingleton ();
   static PlayState* getSingletonPtr ();
@@ -55,6 +74,17 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   Ogre::SceneManager* _sceneMgr;
   Ogre::Viewport* _viewport;
   Ogre::Camera* _camera;
+
+  OIS::Keyboard* _keyboard;
+  OIS::Mouse* _mouse;
+
+  OgreBulletDynamics::DynamicsWorld * _world;
+  OgreBulletCollisions::DebugDrawer * _debugDrawer;
+  int _numEntities;
+  float _timeLastObject;
+
+  std::deque <OgreBulletDynamics::RigidBody *>         _bodies;
+  std::deque <OgreBulletCollisions::CollisionShape *>  _shapes;
 
   bool _exitGame;
 };
