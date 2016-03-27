@@ -12,13 +12,7 @@ template<> PlayState* Ogre::Singleton<PlayState>::msSingleton = 0;
 
 
 PlayState::PlayState(){
-  //COGER RATON Y TECLADO
-
-  //_keyboard =;
-  //_mouse = ;
-
-
-
+  
 
 }
 

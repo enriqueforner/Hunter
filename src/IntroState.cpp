@@ -4,45 +4,33 @@
 template<> IntroState* Ogre::Singleton<IntroState>::msSingleton = 0;
 
 IntroState::IntroState(){
-    /*_root = Ogre::Root::getSingletonPtr();
+    _root = Ogre::Root::getSingletonPtr();
     _sceneMgr = _root->createSceneManager(Ogre::ST_GENERIC, "SceneManager");
     _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
     _camera = _sceneMgr->createCamera("IntroCamera");
     
-    _camera->setPosition(Ogre::Vector3(5,20,56));
-    _camera->lookAt(Ogre::Vector3(0,0,0));
-    _camera->setNearClipDistance(5);
-    _camera->setFarClipDistance(10000);
-    
     loadCEGUI();
-    */
+    
 }
 
 void
 IntroState::enter ()
 {
 
-  _root = Ogre::Root::getSingletonPtr();
-  _sceneMgr = _root->createSceneManager(Ogre::ST_GENERIC, "SceneManager");
   _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
-  _camera = _sceneMgr->createCamera("IntroCamera");
-    
+  
+  _camera = _sceneMgr->getCamera("IntroCamera");
   _camera->setPosition(Ogre::Vector3(5,20,56));
   _camera->lookAt(Ogre::Vector3(0,0,0));
   _camera->setNearClipDistance(5);
-  _camera->setFarClipDistance(10000);
-    
-  loadCEGUI();
-
-  _sceneMgr = _root->getSceneManager("SceneManager");
-  _camera = _sceneMgr->getCamera("IntroCamera");
+  _camera->setFarClipDistance(10000);  
 
   _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
   _viewport->setBackgroundColour(Ogre::ColourValue(1.0, 1.0, 1.0));
   
-  IntroScene* iS = new IntroScene(_sceneMgr);
-  iS-> crearMenuInicioCEGUI();
-  iS-> crearWorld();
+  _iS = new IntroScene(_sceneMgr);
+  _iS-> crearMenuInicioCEGUI();
+  _iS-> crearWorld();
   _exitGame = false;
 }
 
@@ -158,7 +146,14 @@ bool IntroState::exitButtonC(const CEGUI::EventArgs& e){
     _exitGame = true;
     return true; 
 }
-
+bool IntroState::playButtonC(const CEGUI::EventArgs& e){
+    changeState(PlayState::getSingletonPtr());
+    return true; 
+}
+bool IntroState::creditsButtonC(const CEGUI::EventArgs& e){
+    _iS->creditos();
+    return true; 
+}
 
 void IntroState::loadCEGUI(){
 
