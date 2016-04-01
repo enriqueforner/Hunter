@@ -7,6 +7,9 @@
 
 #include "PauseState.h"
 
+#include "Shapes/OgreBulletCollisionsConvexHullShape.h"
+#include "Shapes/OgreBulletCollisionsTrimeshShape.h"    
+#include "OgreBulletCollisionsRay.h"
 
 template<> PlayState* Ogre::Singleton<PlayState>::msSingleton = 0;
 
@@ -42,6 +45,8 @@ PlayState::enter ()
   _numEntities = 0;    // Numero de Shapes instanciadas
   _timeLastObject = 0; // Tiempo desde que se añadio el ultimo objeto
 
+  _mouse = InputManager::getSingletonPtr()->getMouse();
+  
   // Creacion del modulo de debug visual de Bullet ------------------
   _debugDrawer = new OgreBulletCollisions::DebugDrawer();
   _debugDrawer->setDrawWireframe(true);  
@@ -89,6 +94,35 @@ bool
 PlayState::frameStarted
 (const Ogre::FrameEvent& evt)
 {
+
+  Ogre::Vector3 vt(0,0,0);     Ogre::Real tSpeed = 20.0;  
+  _deltaT = evt.timeSinceLastFrame;
+  int fps = 1.0 / _deltaT;
+  bool mbleft, mbmiddle, mbright; // Botones del raton pulsados
+
+  _world->stepSimulation(_deltaT); // Actualizar simulacion Bullet
+  _timeLastObject -= _deltaT;
+
+  int posx = _mouse->getMouseState().X.abs;   // Posicion del puntero
+  int posy = _mouse->getMouseState().Y.abs;   //  en pixeles.
+
+  //std::cout << posx << " " << posy <<"\n";
+  mbmiddle = _mouse->getMouseState().buttonDown(OIS::MB_Middle);
+
+  _camera->moveRelative(vt * _deltaT * tSpeed);
+  if (_camera->getPosition().length() < 10.0) {
+    _camera->moveRelative(-vt * _deltaT * tSpeed);
+  }
+
+  if(mbmiddle){
+    float rotx = _mouse->getMouseState().X.rel * _deltaT * -1;
+    float roty = _mouse->getMouseState().Y.rel * _deltaT * -1;
+    _camera->yaw(Ogre::Radian(rotx));
+    _camera->pitch(Ogre::Radian(roty));  
+  }
+  
+
+
   return true;
 }
 
@@ -99,6 +133,9 @@ PlayState::frameEnded
   if (_exitGame)
     return false;
   
+  _deltaT = evt.timeSinceLastFrame;
+  _world->stepSimulation(_deltaT); // Actualizar simulacion Bullet
+
   return true;
 }
 
@@ -110,6 +147,12 @@ PlayState::keyPressed
   if (e.key == OIS::KC_P) {
     pushState(PauseState::getSingletonPtr());
   }
+  if ((e.key == OIS::KC_B) && (_timeLastObject <= 0)) 
+    AddDynamicObject(box);
+  if ((e.key == OIS::KC_S) && (_timeLastObject <= 0)) 
+    AddDynamicObject(sheep);
+  if (e.key == OIS::KC_D) _world->setShowDebugShapes (true); 
+  if (e.key == OIS::KC_H) _world->setShowDebugShapes (false); 
 }
 
 void
@@ -133,6 +176,51 @@ PlayState::mousePressed
 (const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(convertMouseButton(id));
+
+    float F;
+    RigidBody* body; Vector3 p; Ray r;
+    int posx = _mouse->getMouseState().X.abs;   // Posicion del puntero
+    int posy = _mouse->getMouseState().Y.abs;   //  en pixeles.
+    float x = posx/float(_viewport->getActualWidth());   // Pos x normalizada
+    float y = posy/float(_viewport->getActualWidth());  // Pos y normalizada
+
+   if(e.state.buttonDown(OIS::MB_Left)){
+      std::cout << "BOTON IZQUIERDO PULSADO\n";
+      F = 10;
+
+      body = pickBody (p, r, x, y);
+
+      if (body) {  
+        if (!body->isStaticObject()) { 
+          body->enableActiveState ();
+          Vector3 relPos(p - body->getCenterOfMassPosition());
+          Vector3 impulse (r.getDirection ());
+          body->applyImpulse (impulse * F, relPos); 
+        }
+      }  
+   }
+
+   else if(e.state.buttonDown(OIS::MB_Right)){
+      std::cout << "BOTON DERECHO PULSADO\n";
+      F = 100; 
+
+      body = pickBody (p, r, x, y);
+
+      if (body) {  
+        if (!body->isStaticObject()) { 
+          body->enableActiveState ();
+          Vector3 relPos(p - body->getCenterOfMassPosition());
+          Vector3 impulse (r.getDirection ());
+          body->applyImpulse (impulse * F, relPos); 
+        }
+      }  
+   }
+
+   else if(e.state.buttonDown(OIS::MB_Middle)){
+      std::cout << "BOTON RUEDA PULSADO\n";
+   }
+
+
 }
 
 void
@@ -140,6 +228,15 @@ PlayState::mouseReleased
 (const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
   CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertMouseButton(id));
+   /*if(e.state.buttonUp(OIS::MB_Left)){
+      std::cout << "BOTON IZQUIERDO SOLTADO\n";
+   }
+   else if(e.state.buttonUp(OIS::MB_Right)){
+      std::cout << "BOTON DERECHO SOLTADO\n";
+   }
+   else if(e.state.buttonUp(OIS::MB_Middle)){
+      std::cout << "BOTON RUEDA SOLTADO\n";
+   }*/
 }
 
 PlayState*
@@ -202,4 +299,77 @@ void PlayState::CreateInitialWorld() {
   _shapes.push_back(Shape);      
   _bodies.push_back(rigidBodyPlane);
 
+}
+
+void PlayState::AddDynamicObject(TEDynamicObject tObject) {
+  _timeLastObject = 0.25;   // Segundos para anadir uno nuevo... 
+
+  Vector3 size = Vector3::ZERO; 
+  Vector3 position = (_camera->getDerivedPosition() 
+     + _camera->getDerivedDirection().normalisedCopy() * 10);
+ 
+  Entity *entity = NULL;
+  switch (tObject) {
+  case sheep:
+     entity = _sceneMgr->createEntity("Sheep" + 
+     //StringConverter::toString(_numEntities), "sheep.mesh");
+     StringConverter::toString(_numEntities), "CerdoIni.mesh");
+    break;
+  case box: default: 
+    entity = _sceneMgr->createEntity("Box" + 
+    //StringConverter::toString(_numEntities), "cube.mesh");
+    StringConverter::toString(_numEntities), "CerdoIni.mesh");  
+    entity->setMaterialName("cube");
+  }
+
+  SceneNode *node = _sceneMgr->getRootSceneNode()->
+    createChildSceneNode();
+  node->attachObject(entity);
+
+  OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter = NULL; 
+  OgreBulletCollisions::CollisionShape *bodyShape = NULL;
+  OgreBulletDynamics::RigidBody *rigidBody = NULL;
+
+  switch (tObject) {
+  case sheep: 
+    trimeshConverter = new 
+      OgreBulletCollisions::StaticMeshToShapeConverter(entity);
+    bodyShape = trimeshConverter->createConvex();
+    delete trimeshConverter;
+    break;
+  case box: default: 
+    AxisAlignedBox boundingB = entity->getBoundingBox();
+    size = boundingB.getSize(); 
+    size /= 2.0f;   // El tamano en Bullet se indica desde el centro
+    bodyShape = new OgreBulletCollisions::BoxCollisionShape(size);
+  }
+
+  rigidBody = new OgreBulletDynamics::RigidBody("rigidBody" + 
+     StringConverter::toString(_numEntities), _world);
+
+  rigidBody->setShape(node, bodyShape,
+         0.6 /* Restitucion */, 0.6 /* Friccion */,
+         5.0 /* Masa */, position /* Posicion inicial */,
+         Quaternion::IDENTITY /* Orientacion */);
+
+  rigidBody->setLinearVelocity(
+     _camera->getDerivedDirection().normalisedCopy() * 7.0); 
+
+  _numEntities++;
+
+  // Anadimos los objetos a las deques
+  _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
+}
+
+RigidBody* PlayState::pickBody (Vector3 &p, Ray &r, float x, float y) {
+  r = _camera->getCameraToViewportRay (x, y);
+  CollisionClosestRayResultCallback cQuery = 
+    CollisionClosestRayResultCallback (r, _world, 10000);
+  _world->launchRay(cQuery);
+  if (cQuery.doesCollide()) {
+    RigidBody* body = (RigidBody *) (cQuery.getCollidedObject());
+    p = cQuery.getCollisionPoint();
+    return body;
+  }
+  return NULL;
 }

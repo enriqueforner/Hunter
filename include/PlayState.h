@@ -44,6 +44,12 @@ using namespace OgreBulletDynamics;
 class PlayState : public Ogre::Singleton<PlayState>, public GameState
 {
  public:
+
+  enum TEDynamicObject {
+    box,
+    sheep
+  };
+
   PlayState ();
   ~PlayState ();
 
@@ -64,6 +70,8 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
   void CreateInitialWorld();
+  void AddDynamicObject(TEDynamicObject tObject);
+  RigidBody* pickBody (Vector3 &p, Ray &r, float x, float y);
 
   // Heredados de Ogre::Singleton.
   static PlayState& getSingleton ();
@@ -87,6 +95,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   std::deque <OgreBulletCollisions::CollisionShape *>  _shapes;
 
   bool _exitGame;
+  Ogre::Real _deltaT;
 };
 
 #endif
