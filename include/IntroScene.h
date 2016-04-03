@@ -17,8 +17,11 @@ public:
 	void crearMenuInicioCEGUI();
 	void destroyCegui();
 	void creditos();
-
-
+	void retroceder();
+	void ActRanking();
+	void ranking();
+	void limpiarpantallaCEGUI();
+	
 private:
 
 	Ogre::SceneManager* _sceneManager;

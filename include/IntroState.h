@@ -58,6 +58,9 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
   bool exitButtonC(const CEGUI::EventArgs& e);
   bool playButtonC(const CEGUI::EventArgs& e);
   bool creditsButtonC(const CEGUI::EventArgs& e);
+  bool rankingButtonC(const CEGUI::EventArgs& e);
+  bool retroceder_c(const CEGUI::EventArgs& e);
+  bool retroceder_r(const CEGUI::EventArgs& e);
 
  protected:
   Ogre::Root* _root;

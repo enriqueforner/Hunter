@@ -1,5 +1,6 @@
 #include "IntroState.h"
 #include "PlayState.h"
+#include "Ranking.h"
 
 template<> IntroState* Ogre::Singleton<IntroState>::msSingleton = 0;
 
@@ -31,12 +32,14 @@ IntroState::enter ()
   _iS = new IntroScene(_sceneMgr);
   _iS-> crearMenuInicioCEGUI();
   _iS-> crearWorld();
+  _iS -> ActRanking();
   _exitGame = false;
 }
 
 void
 IntroState::exit()
 {
+  _iS -> destroyCegui();
   _sceneMgr->clearScene();
   _root->getAutoCreatedWindow()->removeAllViewports();
 }
@@ -147,6 +150,7 @@ bool IntroState::exitButtonC(const CEGUI::EventArgs& e){
     return true; 
 }
 bool IntroState::playButtonC(const CEGUI::EventArgs& e){
+    _iS->limpiarpantallaCEGUI();
     changeState(PlayState::getSingletonPtr());
     return true; 
 }
@@ -154,7 +158,18 @@ bool IntroState::creditsButtonC(const CEGUI::EventArgs& e){
     _iS->creditos();
     return true; 
 }
-
+bool IntroState::rankingButtonC(const CEGUI::EventArgs& e){
+    _iS->ranking();
+    return true; 
+}
+bool IntroState::retroceder_c(const CEGUI::EventArgs& e){
+    _iS->retroceder();
+    return true; 
+}
+bool IntroState::retroceder_r(const CEGUI::EventArgs& e){
+    _iS->retroceder();
+    return true; 
+}
 void IntroState::loadCEGUI(){
 
   //CEGUI

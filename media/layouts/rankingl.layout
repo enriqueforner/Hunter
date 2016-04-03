@@ -557,33 +557,8 @@
             </AutoWindow>
         </Window>
         <Window type="OgreTray/Button" name="AtrasRanking" >
-            <Property name="Area" value="{{0,308},{0,568},{0,404},{0,600}}" />
+            <Property name="Area" value="{{0,277},{0,566},{0,373},{0,598}}" />
             <Property name="Text" value="ATRAS" />
-        </Window>
-        <Window type="OgreTray/StaticText" name="StaticText" >
-            <Property name="Area" value="{{0,242},{0,564},{0,290},{0,606}}" />
-            <Property name="Text" value=" A" />
-            <Property name="MaxSize" value="{{1,0},{1,0}}" />
-            <Property name="HorzScrollPageSize" value="22" />
-            <Property name="VertScrollPageSize" value="16" />
-            <Property name="HorzScrollDocumentSize" value="11" />
-            <Property name="VertScrollDocumentSize" value="13.6796" />
-            <AutoWindow namePath="__auto_hscrollbar__" >
-                <AutoWindow namePath="__auto_incbtn__" >
-                    <Property name="Visible" value="false" />
-                </AutoWindow>
-                <AutoWindow namePath="__auto_decbtn__" >
-                    <Property name="Visible" value="false" />
-                </AutoWindow>
-            </AutoWindow>
-            <AutoWindow namePath="__auto_vscrollbar__" >
-                <AutoWindow namePath="__auto_incbtn__" >
-                    <Property name="Visible" value="false" />
-                </AutoWindow>
-                <AutoWindow namePath="__auto_decbtn__" >
-                    <Property name="Visible" value="false" />
-                </AutoWindow>
-            </AutoWindow>
         </Window>
     </Window>
 </GUILayout>
