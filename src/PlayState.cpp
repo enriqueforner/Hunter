@@ -62,7 +62,7 @@ PlayState::enter ()
   _world = new OgreBulletDynamics::DynamicsWorld(_sceneMgr,
      worldBounds, gravity);
   _world->setDebugDrawer (_debugDrawer);
-  _world->setShowDebugShapes (false);  // Muestra los collision shapes
+  _world->setShowDebugShapes (true);  // Muestra los collision shapes
 
   // Creacion de los elementos iniciales del mundo
   
@@ -167,14 +167,29 @@ PlayState::keyReleased
 void
 PlayState::mouseMoved
 (const OIS::MouseEvent &e)
-{
+{  /* OIS Y CEGUI SINCRONIZADOS POR FIN */
   CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseMove(e.state.X.rel, e.state.Y.rel);
+  CEGUI::Vector2f posCegui = CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().getPosition();
+  OIS::MouseState &mutableMouseState = const_cast<OIS::MouseState &>(_mouse->getMouseState());
+  mutableMouseState.X.abs = posCegui.d_x;
+  mutableMouseState.Y.abs = posCegui.d_y;
 }
 
 void
 PlayState::mousePressed
 (const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
+  /*  */
+  //PARECE QUE OIS Y CEGUI YA ESTAN SINCRONIZADOS PERO SIGUEN SIN IR BIEN LOS EMPUJONES (POR UN POQUILLO)
+   std::cout << "OIS X: " << _mouse->getMouseState().X.abs << "\n"; 
+   std::cout << "OIS Y: " << _mouse->getMouseState().Y.abs << "\n";
+
+   CEGUI::Vector2f posCegui = CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().getPosition();
+
+   std::cout << "CEGUI X: " << posCegui.d_x << "\n"; 
+   std::cout << "CEGUI Y: " << posCegui.d_y << "\n";
+
+
    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(convertMouseButton(id));
 
     float F;
