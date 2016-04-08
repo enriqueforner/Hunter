@@ -159,7 +159,7 @@ PlayState::frameStarted
   if(_shootKeyDown){
     _keyDownTime = _keyDownTime + _deltaT;
   }
-
+  DetectCollisionPig();
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
   return true;
@@ -389,6 +389,26 @@ void PlayState::CreateInitialWorld() {
   _shapes.push_back(Shape);      
   _bodies.push_back(rigidBodyPlane);
 
+  //CREACION DEL SUPER CERDO CHOCADOR
+  Entity *entity2 = _sceneMgr->createEntity("CERDO","CerdoIni.mesh");
+  SceneNode *node2 = _sceneMgr->createSceneNode("CERDO");
+  node2->attachObject(entity2);
+  node2-> setPosition(9,7,20);
+  //node2->setScale(3,3,3);
+  
+  _sceneMgr->getRootSceneNode()->addChild(node2);
+  OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter2 = new 
+    OgreBulletCollisions::StaticMeshToShapeConverter(entity2);
+
+  OgreBulletCollisions::TriangleMeshCollisionShape *Trimesh2 = 
+    trimeshConverter2->createTrimesh();
+
+   OgreBulletDynamics::RigidBody *rigidObject2 = new 
+    OgreBulletDynamics::RigidBody("CERDO", _world);
+  rigidObject2->setShape(node2, Trimesh2, 3, 3, 0, Vector3::ZERO, 
+       Quaternion::IDENTITY);
+
+
 }
 
 void PlayState::AddDynamicObject(TEDynamicObject tObject) {
@@ -523,4 +543,41 @@ void PlayState::AddAndThrowDynamicObject(TEDynamicObject tObject, double force) 
   // Anadimos los objetos a las deques
   _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
   _trackedBody = rigidBody;
+}
+
+
+void PlayState::DetectCollisionPig() {
+  //Interface for detect collision in the _world
+  btCollisionWorld *bulletWorld = _world->getBulletCollisionWorld();
+  // 
+  int numManifolds = bulletWorld->getDispatcher()->getNumManifolds();
+
+  for (int i=0;i<numManifolds;i++) {
+    btPersistentManifold* contactManifold = 
+      bulletWorld->getDispatcher()->getManifoldByIndexInternal(i);
+    btCollisionObject* obA = 
+      (btCollisionObject*)(contactManifold->getBody0());
+    btCollisionObject* obB = 
+      (btCollisionObject*)(contactManifold->getBody1());
+    
+    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("CERDO");
+
+    OgreBulletCollisions::Object *obDrain = _world->findObject(drain);
+    OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
+    OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
+
+    if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
+      Ogre::SceneNode* node = NULL;
+      if ((obOB_A != obDrain) && (obOB_A)) {
+  node = obOB_A->getRootNode(); /*delete obOB_A*/;
+      }
+      else if ((obOB_B != obDrain) && (obOB_B)) {
+  node = obOB_B->getRootNode(); /*delete obOB_B*/;
+      }
+      if (node) {
+  std::cout << node->getName() << "ESTA TOCANDO" << std::endl;
+        
+      }
+    } 
+  }
 }

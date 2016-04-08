@@ -78,6 +78,8 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   static PlayState& getSingleton ();
   static PlayState* getSingletonPtr ();
 
+  void DetectCollisionPig();
+
  protected:
   Ogre::Root* _root;
   Ogre::SceneManager* _sceneMgr;
