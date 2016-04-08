@@ -11,6 +11,8 @@
 #include "Shapes/OgreBulletCollisionsTrimeshShape.h"    
 #include "OgreBulletCollisionsRay.h"
 
+#define THROW_FORCE 30.0
+
 template<> PlayState* Ogre::Singleton<PlayState>::msSingleton = 0;
 
 
@@ -25,7 +27,6 @@ void
 PlayState::enter ()
 {
   _root = Ogre::Root::getSingletonPtr();
-
   // Se recupera el gestor de escena y la cámara.
   _sceneMgr = _root->getSceneManager("SceneManager");
   _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
@@ -64,10 +65,26 @@ PlayState::enter ()
   _world->setDebugDrawer (_debugDrawer);
   _world->setShowDebugShapes (true);  // Muestra los collision shapes
 
+  //CAMARA 2
+  _aerialCamera = _sceneMgr->createCamera("AerialCamera");
+  _aerialCamera->setPosition(Ogre::Vector3(0, 70, -50));
+  _aerialCamera->lookAt(Ogre::Vector3(0, -1, 0));
+  _aerialCamera->setNearClipDistance(5);
+  
+  //CAMARA 3
+  _projectileCamera = _sceneMgr->createCamera("ProjectileCamera");
+  _projectileCamera->setPosition(Ogre::Vector3(0, 0, 0));
+  _projectileCamera->lookAt(Ogre::Vector3(0, 0, 0));
+  _projectileCamera->setNearClipDistance(5);
+
+  _trackedBody = NULL;
+
   // Creacion de los elementos iniciales del mundo
   
   CreateInitialWorld();
 
+  _keyDownTime = 0.0;
+  _shootKeyDown = false;
   _exitGame = false;
 }
 
@@ -97,6 +114,7 @@ PlayState::frameStarted
 
   Ogre::Vector3 vt(0,0,0);     Ogre::Real tSpeed = 20.0;  
   _deltaT = evt.timeSinceLastFrame;
+
   int fps = 1.0 / _deltaT;
   bool mbleft, mbmiddle, mbright; // Botones del raton pulsados
 
@@ -121,7 +139,15 @@ PlayState::frameStarted
     _camera->pitch(Ogre::Radian(roty));  
   }
   
+  if(_trackedBody){
+    _projectileCamera->setPosition(_trackedBody->getCenterOfMassPosition());
+  }
 
+  if(_shootKeyDown){
+    _keyDownTime = _keyDownTime + _deltaT;
+  }
+
+  //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
   return true;
 }
@@ -149,10 +175,37 @@ PlayState::keyPressed
   }
   if ((e.key == OIS::KC_B) && (_timeLastObject <= 0)) 
     AddDynamicObject(box);
-  if ((e.key == OIS::KC_S) && (_timeLastObject <= 0)) 
-    AddDynamicObject(sheep);
+  if (e.key == OIS::KC_E){
+    _shootKeyDown = true;
+  } 
+  else{
+    _keyDownTime = 0.0;
+  }
   if (e.key == OIS::KC_D) _world->setShowDebugShapes (true); 
   if (e.key == OIS::KC_H) _world->setShowDebugShapes (false); 
+  if (e.key == OIS::KC_A){ //AerialCamera
+    _root->getAutoCreatedWindow()->removeAllViewports();
+    _viewport = _root->getAutoCreatedWindow()->addViewport(_aerialCamera);
+    double width = _viewport->getActualWidth();
+    double height = _viewport->getActualHeight();
+    _aerialCamera->setAspectRatio(width / height);
+  }
+  if (e.key == OIS::KC_D){ //DefaultCamera
+    _root->getAutoCreatedWindow()->removeAllViewports();
+    _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
+    double width = _viewport->getActualWidth();
+    double height = _viewport->getActualHeight();
+    _camera->setAspectRatio(width / height);
+  }
+
+  if (e.key == OIS::KC_S && _trackedBody){
+     _root->getAutoCreatedWindow()->removeAllViewports();
+     _viewport = _root->getAutoCreatedWindow()->addViewport(_projectileCamera);
+     double width = _viewport->getActualWidth();
+     double height = _viewport->getActualHeight();
+     _projectileCamera->setAspectRatio(width / height);
+  } 
+   
 }
 
 void
@@ -161,6 +214,11 @@ PlayState::keyReleased
 {
   if (e.key == OIS::KC_ESCAPE) {
     _exitGame = true;
+  }
+  if (e.key == OIS::KC_E){
+    _shootKeyDown = false;
+    AddAndThrowDynamicObject(sheep,THROW_FORCE*_keyDownTime);
+    _keyDownTime = 0.0;
   }
 }
 
@@ -387,4 +445,65 @@ RigidBody* PlayState::pickBody (Vector3 &p, Ray &r, float x, float y) {
     return body;
   }
   return NULL;
+}
+void PlayState::AddAndThrowDynamicObject(TEDynamicObject tObject, double force) {
+  //AddDynamicObject(tObject);
+  _timeLastObject = 0.25;   // Segundos para anadir uno nuevo... 
+
+  Vector3 size = Vector3::ZERO; 
+  Vector3 position = (_camera->getDerivedPosition() 
+     + _camera->getDerivedDirection().normalisedCopy() * 10);
+ 
+  Entity *entity = NULL;
+  switch (tObject) {
+  case sheep:
+     entity = _sceneMgr->createEntity("Sheep" + 
+     //StringConverter::toString(_numEntities), "sheep.mesh");
+     StringConverter::toString(_numEntities), "CerdoIni.mesh");
+    break;
+  case box: default: 
+    entity = _sceneMgr->createEntity("Box" + 
+    //StringConverter::toString(_numEntities), "cube.mesh");
+    StringConverter::toString(_numEntities), "CerdoIni.mesh");  
+    entity->setMaterialName("cube");
+  }
+
+  SceneNode *node = _sceneMgr->getRootSceneNode()->
+    createChildSceneNode();
+  node->attachObject(entity);
+
+  OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter = NULL; 
+  OgreBulletCollisions::CollisionShape *bodyShape = NULL;
+  OgreBulletDynamics::RigidBody *rigidBody = NULL;
+
+  switch (tObject) {
+  case sheep: 
+    trimeshConverter = new 
+      OgreBulletCollisions::StaticMeshToShapeConverter(entity);
+    bodyShape = trimeshConverter->createConvex();
+    delete trimeshConverter;
+    break;
+  case box: default: 
+    AxisAlignedBox boundingB = entity->getBoundingBox();
+    size = boundingB.getSize(); 
+    size /= 2.0f;   // El tamano en Bullet se indica desde el centro
+    bodyShape = new OgreBulletCollisions::BoxCollisionShape(size);
+  }
+
+  rigidBody = new OgreBulletDynamics::RigidBody("rigidBody" + 
+     StringConverter::toString(_numEntities), _world);
+
+  rigidBody->setShape(node, bodyShape,
+         0.6 /* Restitucion */, 0.6 /* Friccion */,
+         5.0 /* Masa */, position /* Posicion inicial */,
+         Quaternion::IDENTITY /* Orientacion */);
+
+  rigidBody->setLinearVelocity(
+     _camera->getDerivedDirection().normalisedCopy() * force);  //7.0
+
+  _numEntities++;
+
+  // Anadimos los objetos a las deques
+  _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
+  _trackedBody = rigidBody;
 }

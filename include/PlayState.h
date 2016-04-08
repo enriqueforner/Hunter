@@ -71,6 +71,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
   void CreateInitialWorld();
   void AddDynamicObject(TEDynamicObject tObject);
+  void AddAndThrowDynamicObject(TEDynamicObject tObject, double force);
   RigidBody* pickBody (Vector3 &p, Ray &r, float x, float y);
 
   // Heredados de Ogre::Singleton.
@@ -96,6 +97,12 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   bool _exitGame;
   Ogre::Real _deltaT;
+  double _keyDownTime;
+  bool _shootKeyDown;
+
+  Ogre::Camera* _aerialCamera;
+  Ogre::Camera* _projectileCamera;
+  OgreBulletDynamics::RigidBody * _trackedBody;
 };
 
 #endif
