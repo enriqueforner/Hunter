@@ -1,3 +1,4 @@
+
 #include "PauseState.h"
 
 template<> PauseState* Ogre::Singleton<PauseState>::msSingleton = 0;
@@ -68,18 +69,21 @@ void
 PauseState::mouseMoved
 (const OIS::MouseEvent &e)
 {
+  CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseMove(e.state.X.rel, e.state.Y.rel);
 }
 
 void
 PauseState::mousePressed
 (const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
+   CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(convertMouseButton(id));
 }
 
 void
 PauseState::mouseReleased
 (const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
+  CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertMouseButton(id));
 }
 
 PauseState*
@@ -93,4 +97,24 @@ PauseState::getSingleton ()
 { 
   assert(msSingleton);
   return *msSingleton;
+}
+
+CEGUI::MouseButton PauseState::convertMouseButton(OIS::MouseButtonID id)
+{
+  CEGUI::MouseButton ceguiId;
+  switch(id)
+    {
+    case OIS::MB_Left:
+      ceguiId = CEGUI::LeftButton;
+      break;
+    case OIS::MB_Right:
+      ceguiId = CEGUI::RightButton;
+      break;
+    case OIS::MB_Middle:
+      ceguiId = CEGUI::MiddleButton;
+      break;
+    default:
+      ceguiId = CEGUI::LeftButton;
+    }
+  return ceguiId;
 }

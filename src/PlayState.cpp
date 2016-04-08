@@ -11,7 +11,9 @@
 #include "Shapes/OgreBulletCollisionsTrimeshShape.h"    
 #include "OgreBulletCollisionsRay.h"
 
-#define THROW_FORCE 30.0
+#define THROW_FORCE 50.0
+#define T_SPEED 20.0
+#define CAM_ROTATION_SPEED 20.0
 
 template<> PlayState* Ogre::Singleton<PlayState>::msSingleton = 0;
 
@@ -85,12 +87,17 @@ PlayState::enter ()
 
   _keyDownTime = 0.0;
   _shootKeyDown = false;
+  _mouseRotation = Vector2::ZERO;
+
+  CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
+
   _exitGame = false;
 }
 
 void
 PlayState::exit ()
 {
+  CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().show();
   _sceneMgr->clearScene();
   _root->getAutoCreatedWindow()->removeAllViewports();
 }
@@ -98,12 +105,14 @@ PlayState::exit ()
 void
 PlayState::pause()
 {
+  CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().show();
 }
 
 void
 PlayState::resume()
 {
   // Se restaura el background colour.
+  CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
   _viewport->setBackgroundColour(Ogre::ColourValue(0.0, 0.0, 1.0));
 }
 
@@ -131,6 +140,10 @@ PlayState::frameStarted
   if (_camera->getPosition().length() < 10.0) {
     _camera->moveRelative(-vt * _deltaT * tSpeed);
   }
+
+  _camera->yaw(Degree(CAM_ROTATION_SPEED * _deltaT * _mouseRotation.x)); //, Node::TS_PARENT
+  _camera->pitch(Degree(CAM_ROTATION_SPEED * _deltaT * _mouseRotation.y)); //, Node::TS_LOCAL
+  _mouseRotation = Vector2::ZERO;
 
   if(mbmiddle){
     float rotx = _mouse->getMouseState().X.rel * _deltaT * -1;
@@ -231,6 +244,10 @@ PlayState::mouseMoved
   OIS::MouseState &mutableMouseState = const_cast<OIS::MouseState &>(_mouse->getMouseState());
   mutableMouseState.X.abs = posCegui.d_x;
   mutableMouseState.Y.abs = posCegui.d_y;
+
+  _mouseRotation.x = e.state.X.rel;
+  _mouseRotation.y = e.state.Y.rel;
+
 }
 
 void

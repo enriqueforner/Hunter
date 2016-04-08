@@ -25,6 +25,7 @@
 #include <OIS/OIS.h>
 
 #include "GameState.h"
+#include <CEGUI.h>
 
 class PauseState : public Ogre::Singleton<PauseState>, public GameState
 {
@@ -45,6 +46,8 @@ class PauseState : public Ogre::Singleton<PauseState>, public GameState
 
   bool frameStarted (const Ogre::FrameEvent& evt);
   bool frameEnded (const Ogre::FrameEvent& evt);
+
+  CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
 
   // Heredados de Ogre::Singleton.
   static PauseState& getSingleton ();

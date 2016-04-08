@@ -103,6 +103,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   Ogre::Camera* _aerialCamera;
   Ogre::Camera* _projectileCamera;
   OgreBulletDynamics::RigidBody * _trackedBody;
+  Ogre::Vector2 _mouseRotation;
 };
 
 #endif
