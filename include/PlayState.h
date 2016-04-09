@@ -37,6 +37,8 @@
 #include <Shapes/OgreBulletCollisionsStaticPlaneShape.h>
 #include <Shapes/OgreBulletCollisionsBoxShape.h>
 
+#include <OBEntity.h> 
+
 using namespace Ogre;
 using namespace OgreBulletCollisions;
 using namespace OgreBulletDynamics;
@@ -44,11 +46,6 @@ using namespace OgreBulletDynamics;
 class PlayState : public Ogre::Singleton<PlayState>, public GameState
 {
  public:
-
-  enum TEDynamicObject {
-    box,
-    sheep
-  };
 
   PlayState ();
   ~PlayState ();
@@ -96,6 +93,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   std::deque <OgreBulletDynamics::RigidBody *>         _bodies;
   std::deque <OgreBulletCollisions::CollisionShape *>  _shapes;
+  std::deque <OBEntity *>  _obEntities;
 
   bool _exitGame;
   Ogre::Real _deltaT;

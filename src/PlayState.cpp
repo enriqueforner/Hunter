@@ -14,6 +14,7 @@
 #define THROW_FORCE 50.0
 #define T_SPEED 20.0
 #define CAM_ROTATION_SPEED 20.0
+#define SHOOT_COOLDOWN 1
 
 template<> PlayState* Ogre::Singleton<PlayState>::msSingleton = 0;
 
@@ -76,7 +77,9 @@ PlayState::enter ()
   //CAMARA 3
   _projectileCamera = _sceneMgr->createCamera("ProjectileCamera");
   _projectileCamera->setPosition(Ogre::Vector3(0, 0, 0));
-  _projectileCamera->lookAt(Ogre::Vector3(0, 0, 0));
+  //_projectileCamera->lookAt(Ogre::Vector3(0, 0, 0));
+  //CONTROLAR LA DIRECCION DE LA PROJECTILECAMERA
+  _projectileCamera->lookAt(_camera->getDerivedDirection());
   _projectileCamera->setNearClipDistance(5);
 
   _trackedBody = NULL;
@@ -144,6 +147,9 @@ PlayState::frameStarted
   _camera->yaw(Degree(CAM_ROTATION_SPEED * _deltaT * _mouseRotation.x)); //, Node::TS_PARENT
   _camera->pitch(Degree(CAM_ROTATION_SPEED * _deltaT * _mouseRotation.y)); //, Node::TS_LOCAL
   _mouseRotation = Vector2::ZERO;
+
+  //CONTROLAR LA DIRECCION DE LA CAMARA DEL PROYECTIL
+  _projectileCamera->lookAt(_camera->getDerivedDirection());
 
   if(mbmiddle){
     float rotx = _mouse->getMouseState().X.rel * _deltaT * -1;
@@ -228,9 +234,9 @@ PlayState::keyReleased
   if (e.key == OIS::KC_ESCAPE) {
     _exitGame = true;
   }
-  if (e.key == OIS::KC_E){
+  if ((e.key == OIS::KC_E) &&(_timeLastObject <= 0)){
     _shootKeyDown = false;
-    AddAndThrowDynamicObject(sheep,THROW_FORCE*_keyDownTime);
+    AddAndThrowDynamicObject(sheep, THROW_FORCE*_keyDownTime); //poner aqui el tipo de cosa que tirar
     _keyDownTime = 0.0;
   }
 }
@@ -483,49 +489,38 @@ RigidBody* PlayState::pickBody (Vector3 &p, Ray &r, float x, float y) {
   }
   return NULL;
 }
-void PlayState::AddAndThrowDynamicObject(TEDynamicObject tObject, double force) {
+void PlayState::AddAndThrowDynamicObject(TEDynamicObject type, double force) {
   //AddDynamicObject(tObject);
-  _timeLastObject = 0.25;   // Segundos para anadir uno nuevo... 
+  _timeLastObject = SHOOT_COOLDOWN;   // Segundos para anadir uno nuevo... 
 
   Vector3 size = Vector3::ZERO; 
   Vector3 position = (_camera->getDerivedPosition() 
      + _camera->getDerivedDirection().normalisedCopy() * 10);
  
   Entity *entity = NULL;
-  switch (tObject) {
-  case sheep:
-     entity = _sceneMgr->createEntity("Sheep" + 
-     //StringConverter::toString(_numEntities), "sheep.mesh");
-     StringConverter::toString(_numEntities), "CerdoIni.mesh");
-    break;
-  case box: default: 
-    entity = _sceneMgr->createEntity("Box" + 
-    //StringConverter::toString(_numEntities), "cube.mesh");
-    StringConverter::toString(_numEntities), "CerdoIni.mesh");  
-    entity->setMaterialName("cube");
-  }
+  OBEntity *obentity = new OBEntity(type);
+
+  entity = _sceneMgr->createEntity("OBEntity" + 
+  //StringConverter::toString(_numEntities), "sheep.mesh");
+  StringConverter::toString(_numEntities), "CerdoIni.mesh");
 
   SceneNode *node = _sceneMgr->getRootSceneNode()->
     createChildSceneNode();
   node->attachObject(entity);
 
+  obentity->setSceneNode(node);
+
   OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter = NULL; 
   OgreBulletCollisions::CollisionShape *bodyShape = NULL;
   OgreBulletDynamics::RigidBody *rigidBody = NULL;
 
-  switch (tObject) {
-  case sheep: 
-    trimeshConverter = new 
-      OgreBulletCollisions::StaticMeshToShapeConverter(entity);
-    bodyShape = trimeshConverter->createConvex();
-    delete trimeshConverter;
-    break;
-  case box: default: 
-    AxisAlignedBox boundingB = entity->getBoundingBox();
-    size = boundingB.getSize(); 
-    size /= 2.0f;   // El tamano en Bullet se indica desde el centro
-    bodyShape = new OgreBulletCollisions::BoxCollisionShape(size);
-  }
+
+  trimeshConverter = new 
+    OgreBulletCollisions::StaticMeshToShapeConverter(entity);
+  bodyShape = trimeshConverter->createConvex();
+  delete trimeshConverter;
+
+  obentity->setCollisionShape(bodyShape);
 
   rigidBody = new OgreBulletDynamics::RigidBody("rigidBody" + 
      StringConverter::toString(_numEntities), _world);
@@ -538,11 +533,14 @@ void PlayState::AddAndThrowDynamicObject(TEDynamicObject tObject, double force) 
   rigidBody->setLinearVelocity(
      _camera->getDerivedDirection().normalisedCopy() * force);  //7.0
 
+  obentity->setRigidBody(rigidBody);
+
   _numEntities++;
 
   // Anadimos los objetos a las deques
   _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
   _trackedBody = rigidBody;
+  _obEntities.push_back(obentity);
 }
 
 
