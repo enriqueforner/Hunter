@@ -33,6 +33,8 @@ IntroState::enter ()
   _iS-> crearMenuInicioCEGUI();
   _iS-> crearWorld();
   _iS -> ActRanking();
+  _lanzaranimacion = true;
+  _animState = NULL;
   _exitGame = false;
 }
 
@@ -58,6 +60,23 @@ bool
 IntroState::frameStarted
 (const Ogre::FrameEvent& evt) 
 {
+  Ogre::Real deltaT = evt.timeSinceLastFrame;
+  if (_lanzaranimacion){
+    _animState = _sceneMgr->getEntity("CerdoIni")->getAnimationState("CerdoIniSaltar");
+    _animState->setEnabled(true);
+    _animState->setLoop(true);
+    _animState->setTimePosition(0.0);
+    _lanzaranimacion = false;
+  }
+  if (_animState != NULL) {
+     if (_animState->hasEnded()) {
+       _animState->setTimePosition(0.0);
+       _animState->setEnabled(false);
+     }
+     else {
+       _animState->addTime(deltaT);
+     }
+  }
   return true;
 }
 

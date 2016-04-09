@@ -61,7 +61,7 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
   bool rankingButtonC(const CEGUI::EventArgs& e);
   bool retroceder_c(const CEGUI::EventArgs& e);
   bool retroceder_r(const CEGUI::EventArgs& e);
-
+  bool _lanzaranimacion;
  protected:
   Ogre::Root* _root;
   Ogre::SceneManager* _sceneMgr;
@@ -70,7 +70,7 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
 
   void loadCEGUI();
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
-  
+  Ogre::AnimationState *_animState;
   bool _exitGame;
   IntroScene* _iS;
   CEGUI::OgreRenderer* renderer;

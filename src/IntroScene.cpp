@@ -61,7 +61,7 @@ void IntroScene::crearMenuInicioCEGUI(){
                 IntroState::getSingletonPtr()));
   //Imagenes RANKING
   CEGUI::Window* imgnameranking = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","InameRanking");
-  CEGUI::ImageManager::getSingleton().addFromImageFile("InameRanking","NameMP.png");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("InameRanking","NameMPH.png");
   imgnameranking -> setProperty("Image","InameRanking");
   imgnameranking -> setProperty("BackgroundEnabled","False");
   imgnameranking -> setProperty("FrameEnabled","False");
@@ -70,13 +70,22 @@ void IntroScene::crearMenuInicioCEGUI(){
    ventranking -> addChild(imgnameranking);  
 
   CEGUI::Window* imgnamepoints = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","IpointsRanking");
-  CEGUI::ImageManager::getSingleton().addFromImageFile("IpointsRanking","PointsMP.png");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("IpointsRanking","PointsMPH.png");
   imgnamepoints -> setProperty("Image","IpointsRanking");
   imgnamepoints -> setProperty("BackgroundEnabled","False");
   imgnamepoints -> setProperty("FrameEnabled","False");
   imgnamepoints -> setSize(CEGUI::USize(CEGUI::UDim(0.10f,0),CEGUI::UDim(0.14f,0)));  
   imgnamepoints -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.36f,0),CEGUI::UDim(0.12f,0)));
-   ventranking -> addChild(imgnamepoints);   
+  ventranking -> addChild(imgnamepoints); 
+
+  CEGUI::Window* imgnamehunter = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","INameHunter");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("INameHunter","huntername.png");
+  imgnamehunter -> setProperty("Image","INameHunter");
+  imgnamehunter -> setProperty("BackgroundEnabled","False");
+  imgnamehunter -> setProperty("FrameEnabled","False");
+  imgnamehunter -> setSize(CEGUI::USize(CEGUI::UDim(0.23f,0),CEGUI::UDim(0.34f,0)));  
+  imgnamehunter -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.12f,0),CEGUI::UDim(0.76f,0)));
+  _sheet -> addChild(imgnamehunter);     
 
 }
 
@@ -100,7 +109,7 @@ void IntroScene::crearWorld(){
 
   	_sceneManager->getRootSceneNode()->addChild(node2);
 
-  	Ogre::Entity* entc = _sceneManager->createEntity("CerdoInicio", "CerdoIni.mesh");
+  	Ogre::Entity* entc = _sceneManager->createEntity("CerdoIni", "CerdoIni.mesh");
   	Ogre::SceneNode* nodecer = _sceneManager->createSceneNode("CerdoIni");
   	nodecer->attachObject(entc);
     nodecer-> setPosition(9,5,20);
@@ -118,6 +127,16 @@ void IntroScene::crearWorld(){
     nodelob->setScale(5,5,5);
     nodelob->yaw(Ogre::Degree(150));
     _sceneManager->getRootSceneNode()->addChild(nodelob);
+/*
+    Ogre::Entity* entred = _sceneManager->createEntity("RedilInicio", "Redil.mesh");
+    Ogre::SceneNode* nodered = _sceneManager->createSceneNode("RedilIni");
+    nodered->attachObject(entred);
+    nodered->setScale(5,5,5);
+    
+    nodered->setPosition(-34,5,-30);
+    nodered->yaw(Ogre::Degree(150));
+    _sceneManager->getRootSceneNode()->addChild(nodered);
+*/
 
 
 }
@@ -145,6 +164,9 @@ void IntroScene::destroyCegui(){
   _sheet-> getChild("RankingL")->destroyChild("IpointsRanking");
   CEGUI::ImageManager::getSingleton().destroy("IpointsRanking");
   _sheet-> destroyChild("RankingL");
+  _sheet-> destroyChild("INameHunter");
+  CEGUI::ImageManager::getSingleton().destroy("INameHunter");
+
 }
 
 void IntroScene::limpiarpantallaCEGUI(){
