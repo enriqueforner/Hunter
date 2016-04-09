@@ -395,6 +395,8 @@ void PlayState::CreateInitialWorld() {
   _shapes.push_back(Shape);      
   _bodies.push_back(rigidBodyPlane);
 
+  ColocarWolfAndRedilAndPig();
+
   //CREACION DEL SUPER CERDO CHOCADOR
   Entity *entity2 = _sceneMgr->createEntity("CERDO","CerdoIni.mesh");
   SceneNode *node2 = _sceneMgr->createSceneNode("CERDO");
@@ -409,7 +411,7 @@ void PlayState::CreateInitialWorld() {
   OgreBulletCollisions::TriangleMeshCollisionShape *Trimesh2 = 
     trimeshConverter2->createTrimesh();
 
-   OgreBulletDynamics::RigidBody *rigidObject2 = new 
+  OgreBulletDynamics::RigidBody *rigidObject2 = new 
     OgreBulletDynamics::RigidBody("CERDO", _world);
   rigidObject2->setShape(node2, Trimesh2, 3, 3, 0, Vector3::ZERO, 
        Quaternion::IDENTITY);
@@ -578,4 +580,49 @@ void PlayState::DetectCollisionPig() {
       }
     } 
   }
+}
+
+void PlayState::ColocarWolfAndRedilAndPig() {
+  // CREACION REDIL PARA PONER ANIMALES
+  Entity *entityRedil = _sceneMgr->createEntity("Redil","Redil.mesh");
+  SceneNode *nodeRedil = _sceneMgr->createSceneNode("Redil");
+  nodeRedil->attachObject(entityRedil);
+  //nodeRedil-> setPosition(9,7,20);
+
+  _sceneMgr->getRootSceneNode()->addChild(nodeRedil);
+  OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterR = new 
+          OgreBulletCollisions::StaticMeshToShapeConverter(entityRedil);
+
+  OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshR = 
+          trimeshConverterR->createTrimesh();
+
+  OgreBulletDynamics::RigidBody *rigidObjectR = new 
+    OgreBulletDynamics::RigidBody("Redil", _world);
+  rigidObjectR->setShape(nodeRedil, TrimeshR, 0.5, 0.5, 0, Vector3::ZERO, 
+       Quaternion::IDENTITY);        
+
+   int posx[5] = {10,15,20,25,30};
+  for (int i = 0; i < 5; ++i){
+      std::ostringstream os;
+      os << "Wolf" << i;
+
+      Entity *entityWolf = _sceneMgr->createEntity(os.str(),"Lobo.mesh");
+      SceneNode *nodeWolf = _sceneMgr->createSceneNode(os.str());
+      nodeWolf->attachObject(entityWolf);
+      nodeWolf-> setPosition(10,200,posx[i]);
+
+      _sceneMgr->getRootSceneNode()->addChild(nodeWolf);
+      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterW = new 
+          OgreBulletCollisions::StaticMeshToShapeConverter(entityWolf);
+
+      OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshW = 
+          trimeshConverterW->createTrimesh();
+      OgreBulletDynamics::RigidBody *rigidObjectW = new 
+        OgreBulletDynamics::RigidBody(os.str(), _world);
+      rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(0, 0, posx[i]), 
+        Quaternion::IDENTITY);        
+
+  }
+
+
 }

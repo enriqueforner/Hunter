@@ -74,7 +74,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   // Heredados de Ogre::Singleton.
   static PlayState& getSingleton ();
   static PlayState* getSingletonPtr ();
-
+  void ColocarWolfAndRedilAndPig();
   void DetectCollisionPig();
 
  protected:
