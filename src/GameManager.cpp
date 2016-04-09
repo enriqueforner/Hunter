@@ -122,7 +122,7 @@ GameManager::configure ()
     }
   }
   
-  _renderWindow = _root->initialise(true, "Game State Example");
+  _renderWindow = _root->initialise(true, "Hunterian");
   
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
   

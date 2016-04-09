@@ -1,0 +1,35 @@
+// MarronCuerpoPelo genrated by blender2ogre 0.6.0
+
+material MarronCuerpoPelo 
+{
+    receive_shadows on 
+
+    technique
+    {
+        pass MarronCuerpoPelo
+        {
+            ambient 0.23301579058170319 0.0842214897274971 0.02642589807510376 1.0
+            diffuse 0.18641263524312723 0.06737719278599608 0.02114071877510426 1.0
+            specular 0.5 0.5 0.5 1.0 12.5
+            emissive 0.0 0.0 0.0 1.0
+
+            alpha_to_coverage off
+            colour_write on
+            cull_hardware clockwise
+            depth_check on
+            depth_func less_equal
+            depth_write on
+            illumination_stage 
+            light_clip_planes off
+            light_scissor off
+            lighting on
+            normalise_normals off
+            polygon_mode solid
+            scene_blend one zero
+            scene_blend_op add
+            shading gouraud
+            transparent_sorting on
+
+        }
+    }
+}

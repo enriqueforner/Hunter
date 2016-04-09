@@ -59,8 +59,24 @@ void IntroScene::crearMenuInicioCEGUI(){
     atrasRButton->subscribeEvent(CEGUI::PushButton::EventClicked,
           CEGUI::Event::Subscriber(&IntroState::retroceder_r, 
                 IntroState::getSingletonPtr()));
-  
+  //Imagenes RANKING
+  CEGUI::Window* imgnameranking = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","InameRanking");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("InameRanking","NameMP.png");
+  imgnameranking -> setProperty("Image","InameRanking");
+  imgnameranking -> setProperty("BackgroundEnabled","False");
+  imgnameranking -> setProperty("FrameEnabled","False");
+  imgnameranking -> setSize(CEGUI::USize(CEGUI::UDim(0.10f,0),CEGUI::UDim(0.14f,0)));  
+  imgnameranking -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.21f,0),CEGUI::UDim(0.12f,0)));
+   ventranking -> addChild(imgnameranking);  
 
+  CEGUI::Window* imgnamepoints = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","IpointsRanking");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("IpointsRanking","PointsMP.png");
+  imgnamepoints -> setProperty("Image","IpointsRanking");
+  imgnamepoints -> setProperty("BackgroundEnabled","False");
+  imgnamepoints -> setProperty("FrameEnabled","False");
+  imgnamepoints -> setSize(CEGUI::USize(CEGUI::UDim(0.10f,0),CEGUI::UDim(0.14f,0)));  
+  imgnamepoints -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.36f,0),CEGUI::UDim(0.12f,0)));
+   ventranking -> addChild(imgnamepoints);   
 
 }
 
@@ -95,6 +111,15 @@ void IntroScene::crearWorld(){
     nodecer->yaw(Ogre::Degree(35));
     _sceneManager->getRootSceneNode()->addChild(nodecer);
 
+    Ogre::Entity* entl = _sceneManager->createEntity("LoboInicio", "Lobo.mesh");
+    Ogre::SceneNode* nodelob = _sceneManager->createSceneNode("LoboIni");
+    nodelob->attachObject(entl);
+    nodelob-> setPosition(-34,5,-30);
+    nodelob->setScale(5,5,5);
+    nodelob->yaw(Ogre::Degree(150));
+    _sceneManager->getRootSceneNode()->addChild(nodelob);
+
+
 }
 
 void IntroScene::creditos(){
@@ -113,8 +138,12 @@ void IntroScene::ranking(){
 }
 
 void IntroScene::destroyCegui(){
-  _sheet->destroyChild("hunterMenuP");
+  _sheet-> destroyChild("hunterMenuP");
   _sheet-> destroyChild("Creditos");
+  _sheet-> getChild("RankingL")->destroyChild("InameRanking");
+  CEGUI::ImageManager::getSingleton().destroy("InameRanking");
+  _sheet-> getChild("RankingL")->destroyChild("IpointsRanking");
+  CEGUI::ImageManager::getSingleton().destroy("IpointsRanking");
   _sheet-> destroyChild("RankingL");
 }
 
