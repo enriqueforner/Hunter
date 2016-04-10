@@ -39,6 +39,9 @@
 
 #include <OBEntity.h> 
 
+#include <iostream>
+#include <vector>
+
 using namespace Ogre;
 using namespace OgreBulletCollisions;
 using namespace OgreBulletDynamics;
@@ -76,7 +79,9 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   static PlayState* getSingletonPtr ();
   void ColocarWolfAndRedilAndPig();
   void DetectCollisionPig();
-
+  void TEDynamicObjectMovement();
+  void RecorreVectorTAOAnadirMovimientoConstante();
+  
  protected:
   Ogre::Root* _root;
   Ogre::SceneManager* _sceneMgr;
@@ -94,7 +99,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   std::deque <OgreBulletDynamics::RigidBody *>         _bodies;
   std::deque <OgreBulletCollisions::CollisionShape *>  _shapes;
   std::deque <OBEntity *>  _obEntities;
-
+  
   bool _exitGame;
   Ogre::Real _deltaT;
   double _keyDownTime;
@@ -104,6 +109,10 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   Ogre::Camera* _projectileCamera;
   OgreBulletDynamics::RigidBody * _trackedBody;
   Ogre::Vector2 _mouseRotation;
+
+  std::vector <OgreBulletDynamics::RigidBody *>         _bodiesC;
+  std::vector <OgreBulletCollisions::CollisionShape *>  _shapesC;
+
 };
 
 #endif

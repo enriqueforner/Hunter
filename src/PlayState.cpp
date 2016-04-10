@@ -11,6 +11,9 @@
 #include "Shapes/OgreBulletCollisionsTrimeshShape.h"    
 #include "OgreBulletCollisionsRay.h"
 
+#include <iostream>
+#include <vector>
+
 #define THROW_FORCE 50.0
 #define T_SPEED 20.0
 #define CAM_ROTATION_SPEED 20.0
@@ -166,6 +169,8 @@ PlayState::frameStarted
     _keyDownTime = _keyDownTime + _deltaT;
   }
   DetectCollisionPig();
+  
+  RecorreVectorTAOAnadirMovimientoConstante();
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
   return true;
@@ -396,12 +401,12 @@ void PlayState::CreateInitialWorld() {
   _bodies.push_back(rigidBodyPlane);
 
   ColocarWolfAndRedilAndPig();
-
+  TEDynamicObjectMovement();
   //CREACION DEL SUPER CERDO CHOCADOR
   Entity *entity2 = _sceneMgr->createEntity("CERDO","CerdoIni.mesh");
   SceneNode *node2 = _sceneMgr->createSceneNode("CERDO");
   node2->attachObject(entity2);
-  node2-> setPosition(9,7,20);
+  //node2-> setPosition(9,7,20);
   //node2->setScale(3,3,3);
   
   _sceneMgr->getRootSceneNode()->addChild(node2);
@@ -413,7 +418,7 @@ void PlayState::CreateInitialWorld() {
 
   OgreBulletDynamics::RigidBody *rigidObject2 = new 
     OgreBulletDynamics::RigidBody("CERDO", _world);
-  rigidObject2->setShape(node2, Trimesh2, 3, 3, 0, Vector3::ZERO, 
+  rigidObject2->setShape(node2, Trimesh2, 3, 3, 0, Ogre::Vector3(1,4,2), 
        Quaternion::IDENTITY);
 
 
@@ -507,7 +512,7 @@ void PlayState::AddAndThrowDynamicObject(TEDynamicObject type, double force) {
   StringConverter::toString(_numEntities), "CerdoIni.mesh");
 
   SceneNode *node = _sceneMgr->getRootSceneNode()->
-    createChildSceneNode();
+    createChildSceneNode(entity->getName());
   node->attachObject(entity);
 
   obentity->setSceneNode(node);
@@ -545,11 +550,11 @@ void PlayState::AddAndThrowDynamicObject(TEDynamicObject type, double force) {
   _obEntities.push_back(obentity);
 }
 
-
+//SOLO DECECTA LA COLISION CON EL CERDO QUE SE ESTA MOVIENDO
 void PlayState::DetectCollisionPig() {
-  //Interface for detect collision in the _world
+  //CODIGO COMENTADO PARA DETECTAR COLISIONES EN LOS DEMAS OBJETOS YA SEA EN MOVIMENTO O QUIETOS
   btCollisionWorld *bulletWorld = _world->getBulletCollisionWorld();
-  // 
+  // DE MOMENTO DETECTA COLISIONES SI PASA MUY CERCA
   int numManifolds = bulletWorld->getDispatcher()->getNumManifolds();
 
   for (int i=0;i<numManifolds;i++) {
@@ -559,26 +564,32 @@ void PlayState::DetectCollisionPig() {
       (btCollisionObject*)(contactManifold->getBody0());
     btCollisionObject* obB = 
       (btCollisionObject*)(contactManifold->getBody1());
-    
-    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("CERDO");
+    //OgreBulletCollisions::Object *obDrain = _world->findObject(drain);
+    //CHOCAR CON LOBOS
+    //for (int i = 0; i < 3; ++i){
+        
+    //std::ostringstream os;
+    //os << "CerdoMaloE" << i;
+    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("CerdoMaloE");
 
-    OgreBulletCollisions::Object *obDrain = _world->findObject(drain);
+    OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
+    
     OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
     OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
 
     if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
       Ogre::SceneNode* node = NULL;
       if ((obOB_A != obDrain) && (obOB_A)) {
-  node = obOB_A->getRootNode(); /*delete obOB_A*/;
+        node = obOB_A->getRootNode(); /*delete obOB_A*/;
       }
       else if ((obOB_B != obDrain) && (obOB_B)) {
-  node = obOB_B->getRootNode(); /*delete obOB_B*/;
+        node = obOB_B->getRootNode(); /*delete obOB_B*/;
       }
       if (node) {
-  std::cout << node->getName() << "ESTA TOCANDO" << std::endl;
-        
+        std::cout << node->getName() << "ESTA TOCANDO" << std::endl; 
       }
-    } 
+    }
+    //} 
   }
 }
 
@@ -601,7 +612,7 @@ void PlayState::ColocarWolfAndRedilAndPig() {
   rigidObjectR->setShape(nodeRedil, TrimeshR, 0.5, 0.5, 0, Vector3::ZERO, 
        Quaternion::IDENTITY);        
 
-   int posx[5] = {10,15,20,25,30};
+  int posx[5] = {10,15,20,25,30};
   for (int i = 0; i < 5; ++i){
       std::ostringstream os;
       os << "Wolf" << i;
@@ -621,8 +632,87 @@ void PlayState::ColocarWolfAndRedilAndPig() {
         OgreBulletDynamics::RigidBody(os.str(), _world);
       rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(0, 0, posx[i]), 
         Quaternion::IDENTITY);        
-
+      
   }
-
-
 }
+
+void PlayState::TEDynamicObjectMovement(){
+    //CODIGO COMENTADO PARA AÑADIR 200
+    //int posx[3] = {7,14,21};
+    //for (int i = 0; i < 3; ++i){  
+      TEDynamicObject taO;
+      Entity *entity = NULL;
+      OBEntity *obentity = new OBEntity(taO);
+
+      entity = _sceneMgr->createEntity("CerdoMaloE" /*+ 
+      //StringConverter::toString(_numEntities), "sheep.mesh");
+      StringConverter::toString(i)*/ ,"CerdoIni.mesh");
+
+      SceneNode *node = _sceneMgr->getRootSceneNode()->
+      createChildSceneNode(entity->getName());
+      node->attachObject(entity);
+
+      obentity->setSceneNode(node);
+
+      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter = NULL; 
+      OgreBulletCollisions::CollisionShape *bodyShape = NULL;
+      OgreBulletDynamics::RigidBody *rigidBody = NULL;
+
+      trimeshConverter = new 
+      OgreBulletCollisions::StaticMeshToShapeConverter(entity);
+      bodyShape = trimeshConverter->createConvex();
+      delete trimeshConverter;
+
+      obentity->setCollisionShape(bodyShape);
+
+      rigidBody = new OgreBulletDynamics::RigidBody("CerdoMaloE" /*+ 
+      StringConverter::toString(i),*/, _world);
+
+      rigidBody->setShape(node, bodyShape,
+         0.6 /* Restitucion */, 0.6 /* Friccion */,
+         5.0 /* Masa */, Ogre::Vector3(0, 0, 35),
+         Quaternion::IDENTITY /* Orientacion */);
+      rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
+   
+      _shapesC.push_back(bodyShape);   _bodiesC.push_back(rigidBody);
+    //}
+ } 
+
+ void PlayState::RecorreVectorTAOAnadirMovimientoConstante(){
+    for(std::vector<OgreBulletDynamics::RigidBody *>::iterator it = _bodiesC.begin(); it != _bodiesC.end(); ++it) {
+          (*it) -> setLinearVelocity(Ogre::Vector3(0,0,1));  
+    }
+ }
+ 
+
+
+//CODIGO DEL CHOQUE CON LOBOS
+
+ /*
+//OgreBulletCollisions::Object *obDrain = _world->findObject(drain);
+    //CHOCAR CON LOBOS
+    for (int i = 0; i < 5; ++i){
+        std::ostringstream os;
+        os << "Wolf" << i;
+        Ogre::SceneNode* drain = _sceneMgr->getSceneNode(os.str());
+
+        OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
+    
+
+        OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
+        OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
+
+    if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
+      Ogre::SceneNode* node = NULL;
+      if ((obOB_A != obDrain) && (obOB_A)) {
+        node = obOB_A->getRootNode(); /*delete obOB_A*/;
+    /*  }
+      else if ((obOB_B != obDrain) && (obOB_B)) {
+        node = obOB_B->getRootNode(); /*delete obOB_B*/;
+      /*}
+      if (node) {
+        std::cout << node->getName() << "ESTA TOCANDO" << std::endl;
+        
+      }
+    }
+    } */
