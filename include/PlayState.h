@@ -41,6 +41,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace Ogre;
 using namespace OgreBulletCollisions;
@@ -71,7 +72,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
   void CreateInitialWorld();
   void AddDynamicObject(TEDynamicObject tObject);
-  void AddAndThrowDynamicObject(TEDynamicObject tObject, double force);
+  void AddAndThrowDynamicObject(std::string type, double force);
   RigidBody* pickBody (Vector3 &p, Ray &r, float x, float y);
 
   // Heredados de Ogre::Singleton.
@@ -98,7 +99,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   std::deque <OgreBulletDynamics::RigidBody *>         _bodies;
   std::deque <OgreBulletCollisions::CollisionShape *>  _shapes;
-  std::deque <OBEntity *>  _obEntities;
+  std::vector <OBEntity *>  _obEntities;
   
   bool _exitGame;
   Ogre::Real _deltaT;

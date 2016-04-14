@@ -15,6 +15,7 @@
 #include <vector>
 
 #define THROW_FORCE 50.0
+#define MAX_FORCE 200.0
 #define T_SPEED 20.0
 #define CAM_ROTATION_SPEED 20.0
 #define SHOOT_COOLDOWN 1
@@ -23,8 +24,6 @@ template<> PlayState* Ogre::Singleton<PlayState>::msSingleton = 0;
 
 
 PlayState::PlayState(){
-  
-
 }
 
 PlayState::~PlayState(){}
@@ -236,12 +235,19 @@ void
 PlayState::keyReleased
 (const OIS::KeyEvent &e)
 {
+  double tForce = 0.0;
   if (e.key == OIS::KC_ESCAPE) {
     _exitGame = true;
   }
-  if ((e.key == OIS::KC_E) &&(_timeLastObject <= 0)){
+  if (e.key == OIS::KC_E){
+    if(_timeLastObject <= 0){
+      tForce = THROW_FORCE*_keyDownTime;
+      if(tForce > MAX_FORCE){
+        tForce = MAX_FORCE;
+      }
+      AddAndThrowDynamicObject("type", tForce); //poner aqui el tipo de cosa que tirar
+    }
     _shootKeyDown = false;
-    AddAndThrowDynamicObject(sheep, THROW_FORCE*_keyDownTime); //poner aqui el tipo de cosa que tirar
     _keyDownTime = 0.0;
   }
 }
@@ -496,7 +502,7 @@ RigidBody* PlayState::pickBody (Vector3 &p, Ray &r, float x, float y) {
   }
   return NULL;
 }
-void PlayState::AddAndThrowDynamicObject(TEDynamicObject type, double force) {
+void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   //AddDynamicObject(tObject);
   _timeLastObject = SHOOT_COOLDOWN;   // Segundos para anadir uno nuevo... 
 
@@ -505,7 +511,8 @@ void PlayState::AddAndThrowDynamicObject(TEDynamicObject type, double force) {
      + _camera->getDerivedDirection().normalisedCopy() * 10);
  
   Entity *entity = NULL;
-  OBEntity *obentity = new OBEntity(type);
+  //OBEntity *obentity = new OBEntity(type);
+  OBEntity *obentity = new OBEntity("type");
 
   entity = _sceneMgr->createEntity("OBEntity" + 
   //StringConverter::toString(_numEntities), "sheep.mesh");
@@ -550,7 +557,7 @@ void PlayState::AddAndThrowDynamicObject(TEDynamicObject type, double force) {
   _obEntities.push_back(obentity);
 }
 
-//SOLO DECECTA LA COLISION CON EL CERDO QUE SE ESTA MOVIENDO
+//SOLO DETECTA LA COLISION CON EL CERDO QUE SE ESTA MOVIENDO
 void PlayState::DetectCollisionPig() {
   //CODIGO COMENTADO PARA DETECTAR COLISIONES EN LOS DEMAS OBJETOS YA SEA EN MOVIMENTO O QUIETOS
   btCollisionWorld *bulletWorld = _world->getBulletCollisionWorld();
@@ -580,13 +587,15 @@ void PlayState::DetectCollisionPig() {
     if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
       Ogre::SceneNode* node = NULL;
       if ((obOB_A != obDrain) && (obOB_A)) {
-        node = obOB_A->getRootNode(); /*delete obOB_A*/;
+        node = obOB_A->getRootNode(); /*delete obOB_A;*/
       }
       else if ((obOB_B != obDrain) && (obOB_B)) {
-        node = obOB_B->getRootNode(); /*delete obOB_B*/;
+        node = obOB_B->getRootNode(); /*delete obOB_B;*/
       }
       if (node) {
         std::cout << node->getName() << "ESTA TOCANDO" << std::endl; 
+        //delete node;
+
       }
     }
     //} 
@@ -642,7 +651,8 @@ void PlayState::TEDynamicObjectMovement(){
     //for (int i = 0; i < 3; ++i){  
       TEDynamicObject taO;
       Entity *entity = NULL;
-      OBEntity *obentity = new OBEntity(taO);
+      //OBEntity *obentity = new OBEntity(taO);
+      OBEntity *obentity = new OBEntity("type");
 
       entity = _sceneMgr->createEntity("CerdoMaloE" /*+ 
       //StringConverter::toString(_numEntities), "sheep.mesh");

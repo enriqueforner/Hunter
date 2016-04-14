@@ -8,7 +8,7 @@
 
 #include "OBEntity.h"
 
-OBEntity::OBEntity(TEDynamicObject type){
+OBEntity::OBEntity(std::string type){
 	_type = type;
 }
 
@@ -22,7 +22,7 @@ OBEntity::~OBEntity(){
 Ogre::SceneNode* OBEntity::getSceneNode(){
 	return _sNode;
 }
-TEDynamicObject OBEntity::getType(){
+std::string OBEntity::getType(){
 	return _type;
 }
 OgreBulletCollisions::CollisionShape* OBEntity::getCollisionShape(){
@@ -31,10 +31,13 @@ OgreBulletCollisions::CollisionShape* OBEntity::getCollisionShape(){
 OgreBulletDynamics::RigidBody* OBEntity::getRigidBody(){
 	return _rigBody;
 }
+int OBEntity::getPoints(){
+	return _points;
+}
 void OBEntity::setSceneNode(Ogre::SceneNode* sceneNode){
 	_sNode = sceneNode;
 }
-void OBEntity::setType(TEDynamicObject type){
+void OBEntity::setType(std::string type){
 	_type = type;
 }
 void OBEntity::setCollisionShape(OgreBulletCollisions::CollisionShape* collisionShape){
@@ -42,4 +45,7 @@ void OBEntity::setCollisionShape(OgreBulletCollisions::CollisionShape* collision
 }
 void OBEntity::setRigidBody(OgreBulletDynamics::RigidBody* rigidBody){
 	_rigBody = rigidBody;
+}
+void OBEntity::setPoints(int points){
+	_points = points;
 }

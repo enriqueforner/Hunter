@@ -1,0 +1,149 @@
+#include "MovementController.h"
+
+#include "Shapes/OgreBulletCollisionsTrimeshShape.h"  
+#include "Shapes/OgreBulletCollisionsSphereShape.h" 
+#include "Utils/OgreBulletCollisionsMeshToShapeConverter.h"
+
+#include "Shapes/OgreBulletCollisionsConvexHullShape.h"    
+#include "OgreBulletCollisionsRay.h"
+
+#include <iostream>
+#include <vector>
+
+#define THROW_FORCE 50.0
+#define T_SPEED 20.0
+#define CAM_ROTATION_SPEED 20.0
+#define SHOOT_COOLDOWN 1
+
+MovementController::MovementController(Ogre::SceneManager* sceneMgr){
+	_sceneMgr = sceneMgr;
+	//Crear los 2 nodos guia
+	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Redil.mesh");
+  	_wolfGuide = _sceneMgr->createSceneNode("wolfGuide");
+  	_wolfGuide->attachObject(wolfGuideEntity);
+
+  	Entity *pigGuideEntity = _sceneMgr->createEntity("pigGuideEntity","Redil.mesh");
+  	_pigGuide = _sceneMgr->createSceneNode("pigGuide");
+  	_pigGuide->attachObject(pigGuideEntity);
+
+
+  	//_wolfGuide->setVisible(false);
+  	//_pigGuide->setVisible(false);
+
+  	_wolfGuideTarget =_sceneMgr->getSceneNode("Redil")->getPosition();
+  	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
+  	_pigGuidePath = new std::vector <Ogre::Vector3>;
+  	_pigGuidePath->push_back(_wolfGuideTarget); //Esto es de prueba, borrar luego
+}
+	
+MovementController::MovementController(Ogre::SceneManager* sceneMgr, std::deque <OgreBulletDynamics::RigidBody *> *bodies, std::deque <OgreBulletCollisions::CollisionShape *> *shapes, std::vector <OBEntity *>  *obEntities){
+	_sceneMgr = sceneMgr;
+	_bodies = bodies;
+	_shapes = shapes;
+	_obEntities = obEntities;
+	//Crear los 2 nodos guia
+	
+	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Redil.mesh");
+  	_wolfGuide = _sceneMgr->createSceneNode("wolfGuide");
+  	_wolfGuide->attachObject(wolfGuideEntity);
+
+  	Entity *pigGuideEntity = _sceneMgr->createEntity("pigGuideEntity","Redil.mesh");
+  	_pigGuide = _sceneMgr->createSceneNode("pigGuide");
+  	_pigGuide->attachObject(pigGuideEntity);
+
+  	//_wolfGuide->setVisible(false);
+  	//_pigGuide->setVisible(false);
+
+  	_wolfGuideTarget =_sceneMgr->getSceneNode("Redil")->getPosition();
+  	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
+  	_pigGuidePath = new std::vector <Ogre::Vector3>;
+  	_pigGuidePath->push_back(_wolfGuideTarget); //Esto es de prueba, borrar luego
+}
+
+//MovementController::~MovementController(){}
+
+std::deque <OgreBulletDynamics::RigidBody *> *MovementController::getRigidBodies(){
+	return _bodies;
+}
+std::deque <OgreBulletCollisions::CollisionShape *>  *MovementController::getCollisionShapes(){
+	return _shapes;
+}
+std::vector <OBEntity *> *MovementController::getOBEntities(){
+	return _obEntities;
+}
+Ogre::SceneNode *MovementController::getWolfGuideSN(){
+	return _wolfGuide;
+}
+Ogre::SceneNode *MovementController::getPigGuideSN(){
+	return _pigGuide;
+}
+
+void MovementController::setRigidBodies(std::deque <OgreBulletDynamics::RigidBody *> *bodies){
+	_bodies = bodies;
+}
+
+void MovementController::setCollisionShapes(std::deque <OgreBulletCollisions::CollisionShape *> *shapes){
+	_shapes = shapes;
+}
+
+void MovementController::setOBEntities(std::vector <OBEntity *> *obEntities){
+	_obEntities = obEntities;
+}
+void MovementController::setWolfGuideSN(Ogre::SceneNode *wolfGuide){
+	_wolfGuide = wolfGuide;
+}
+void MovementController::setPigGuideSN(Ogre::SceneNode *pigGuide){
+	_pigGuide = pigGuide;
+}
+void MovementController::setSceneManager(Ogre::SceneManager *sceneMgr){
+	_sceneMgr = sceneMgr;
+}
+
+Ogre::Vector3 *MovementController::getResultVector(Ogre::Vector3 *origin, Ogre::Vector3 *end){
+	int x = end->x - origin->x;
+	int y = end->y - origin->y;
+	int z = end->z - origin->z;
+	Ogre::Vector3 *result = new Ogre::Vector3(x,y,z);
+	return result;
+}
+
+void MovementController::move(){
+	/*MOVIMIENTO DE PRUEBA
+	for(std::deque<OgreBulletDynamics::RigidBody *>::iterator it = _bodies->begin(); it != _bodies->end(); ++it) {
+          (*it) -> setLinearVelocity(Ogre::Vector3(0,0,1));  
+    }*/
+    OBEntity *obAux = new OBEntity("none");
+    Ogre::Vector3 *speed = new Ogre::Vector3(0,0,0);
+    Ogre::Vector3 *targetAux = new Ogre::Vector3(0,0,0); 
+    Ogre::Vector3 *originAux = new Ogre::Vector3(0,0,0);      
+
+    if(_pigGuidePath->size() < 1){
+    	//Volver a meterle la ruta
+    }
+
+    //con OBEntities
+    for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
+    	*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+        if(obAux->getType() == "wolf"){
+        	*targetAux = _wolfGuideTarget;  
+        	*originAux = obAux->getSceneNode()->getPosition();
+        	speed = getResultVector(originAux, targetAux); 
+        	speed->normalise(); //???
+        	obAux->getRigidBody()->setLinearVelocity(*speed); 
+        }
+        else if(obAux->getType() == "pig"){
+        	*targetAux = _pigGuide->getPosition();
+        	*originAux = obAux->getSceneNode()->getPosition();
+        	speed = getResultVector(originAux, targetAux);
+        	speed->normalise(); //???
+        	obAux->getRigidBody()->setLinearVelocity(*speed); 
+        	//ver como queda. Si no, tener un vector con los pigs y que el primero siga al guia, el segundo al primero y asi
+        	//otra opcion, varios pigGuides (2 o 3) y que cada pig siga a uno al azar
+
+        }
+
+        // (*it) ->getRigidBody()->setLinearVelocity(Ogre::Vector3(0,0,1));  
+    }
+}
+
+
