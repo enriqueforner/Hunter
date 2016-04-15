@@ -17,11 +17,18 @@
 #define SHOOT_COOLDOWN 1
 
 //MUDAR LO DE LAS COLISIONES A ESTA CLASE
-PhysicsController::PhysicsController(){}
+PhysicsController::PhysicsController(){
+	_firstCol = true;
+	_latestNodeCol = "none";
+}
 
 PhysicsController::PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world){
 	_sceneMgr = sceneMgr;
 	_world = world;
+	//_obEntities = obEntities;
+	_firstCol = true;
+	_latestNodeCol = "none";
+
 }
 
 //~PhysicsController(){}
@@ -32,12 +39,19 @@ Ogre::SceneManager *PhysicsController::getSceneManager(){
 OgreBulletDynamics::DynamicsWorld *PhysicsController::getWorld(){
 	return _world;
 }
+// std::vector <OBEntity*> *PhysicsController::getOBEntities(){
+// 	return _obEntities;
+// }
+
 void PhysicsController::setSceneManager(Ogre::SceneManager *sceneMgr){
 	_sceneMgr = sceneMgr;
 }
 void PhysicsController::setWorld(OgreBulletDynamics::DynamicsWorld *world){
 	_world = world;
 }
+// void PhysicsController::setOBEntities(std::vector <OBEntity*> *obEntities){
+// 	_obEntities = obEntities;
+// }
 
 
 Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los casos, colisiones de objetos de X tipo con X tipo y tal
@@ -60,7 +74,8 @@ Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los
         
     //std::ostringstream os;
     //os << "CerdoMaloE" << i;
-    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("CerdoMaloE");
+    //Ogre::SceneNode* drain = _sceneMgr->getSceneNode("CerdoMaloE");
+    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("pig0");  
 
     OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
     
@@ -70,13 +85,23 @@ Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los
     if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
       Ogre::SceneNode* node = NULL;
       if ((obOB_A != obDrain) && (obOB_A)) {
-        node = obOB_A->getRootNode(); /*delete obOB_A*/;
+        node = obOB_A->getRootNode(); /*delete obOB_A;*/
       }
       else if ((obOB_B != obDrain) && (obOB_B)) {
-        node = obOB_B->getRootNode(); /*delete obOB_B*/;
+        node = obOB_B->getRootNode(); /*delete obOB_B;*/
       }
-      if (node) {
-        std::cout << node->getName() << "ESTA TOCANDO" << std::endl; 
+      //El siguiente trozo de codigo sirve para detectar solo el primer "golpe" de una colision
+      if(node){
+        if(_latestNodeCol.compare(node->getName())!=0){
+          _firstCol = true;
+        }
+        _latestNodeCol = node->getName();
+        if (_firstCol) {
+          std::cout << "DETECTED COLLISION: " << node->getName() << std::endl; 
+          _firstCol = false;
+          //delete node;
+
+        }
       }
     }
     //} 

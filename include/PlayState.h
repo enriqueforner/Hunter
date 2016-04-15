@@ -38,6 +38,8 @@
 #include <Shapes/OgreBulletCollisionsBoxShape.h>
 
 #include <OBEntity.h> 
+#include "MovementController.h"
+#include "PhysicsController.h"
 
 #include <iostream>
 #include <vector>
@@ -71,9 +73,9 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
   void CreateInitialWorld();
-  void AddDynamicObject(TEDynamicObject tObject);
+  //void AddDynamicObject(TEDynamicObject tObject);
   void AddAndThrowDynamicObject(std::string type, double force);
-  RigidBody* pickBody (Vector3 &p, Ray &r, float x, float y);
+  //RigidBody* pickBody (Vector3 &p, Ray &r, float x, float y);
 
   // Heredados de Ogre::Singleton.
   static PlayState& getSingleton ();
@@ -92,27 +94,32 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   OIS::Keyboard* _keyboard;
   OIS::Mouse* _mouse;
 
-  OgreBulletDynamics::DynamicsWorld * _world;
-  OgreBulletCollisions::DebugDrawer * _debugDrawer;
+  OgreBulletDynamics::DynamicsWorld *_world;
+  OgreBulletCollisions::DebugDrawer *_debugDrawer;
   int _numEntities;
   float _timeLastObject;
 
-  std::deque <OgreBulletDynamics::RigidBody *>         _bodies;
-  std::deque <OgreBulletCollisions::CollisionShape *>  _shapes;
-  std::vector <OBEntity *>  _obEntities;
+  std::deque <OgreBulletDynamics::RigidBody*>         _bodies;
+  std::deque <OgreBulletCollisions::CollisionShape*>  _shapes;
+  std::vector <OBEntity*>  _obEntities;
   
   bool _exitGame;
   Ogre::Real _deltaT;
   double _keyDownTime;
   bool _shootKeyDown;
+  bool _firstCol;
+  std::string _latestNodeCol;
 
   Ogre::Camera* _aerialCamera;
   Ogre::Camera* _projectileCamera;
-  OgreBulletDynamics::RigidBody * _trackedBody;
+  OgreBulletDynamics::RigidBody* _trackedBody;
   Ogre::Vector2 _mouseRotation;
 
-  std::vector <OgreBulletDynamics::RigidBody *>         _bodiesC;
-  std::vector <OgreBulletCollisions::CollisionShape *>  _shapesC;
+  MovementController *_movementController;
+  PhysicsController *_physicsController;
+
+  std::vector <OgreBulletDynamics::RigidBody*>         _bodiesC;
+  std::vector <OgreBulletCollisions::CollisionShape*>  _shapesC;
 
 };
 

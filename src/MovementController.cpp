@@ -14,7 +14,8 @@
 #define T_SPEED 20.0
 #define CAM_ROTATION_SPEED 20.0
 #define SHOOT_COOLDOWN 1
-
+#define NPC_SPEED 15.0
+ 
 MovementController::MovementController(Ogre::SceneManager* sceneMgr){
 	_sceneMgr = sceneMgr;
 	//Crear los 2 nodos guia
@@ -31,6 +32,7 @@ MovementController::MovementController(Ogre::SceneManager* sceneMgr){
   	//_pigGuide->setVisible(false);
 
   	_wolfGuideTarget =_sceneMgr->getSceneNode("Redil")->getPosition();
+  	std::cout<< "POSICION DEL REDIL: "<<_wolfGuideTarget <<std::endl;
   	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
   	_pigGuidePath = new std::vector <Ogre::Vector3>;
   	_pigGuidePath->push_back(_wolfGuideTarget); //Esto es de prueba, borrar luego
@@ -55,6 +57,7 @@ MovementController::MovementController(Ogre::SceneManager* sceneMgr, std::deque 
   	//_pigGuide->setVisible(false);
 
   	_wolfGuideTarget =_sceneMgr->getSceneNode("Redil")->getPosition();
+  	std::cout<< "POSICION DEL REDIL: "<<_wolfGuideTarget <<std::endl;
   	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
   	_pigGuidePath = new std::vector <Ogre::Vector3>;
   	_pigGuidePath->push_back(_wolfGuideTarget); //Esto es de prueba, borrar luego
@@ -99,11 +102,11 @@ void MovementController::setSceneManager(Ogre::SceneManager *sceneMgr){
 	_sceneMgr = sceneMgr;
 }
 
-Ogre::Vector3 *MovementController::getResultVector(Ogre::Vector3 *origin, Ogre::Vector3 *end){
+Ogre::Vector3 *MovementController::getResultVector(Ogre::Vector3 *origin, Ogre::Vector3 *end, double scale){
 	int x = end->x - origin->x;
 	int y = end->y - origin->y;
 	int z = end->z - origin->z;
-	Ogre::Vector3 *result = new Ogre::Vector3(x,y,z);
+	Ogre::Vector3 *result = new Ogre::Vector3(scale*x,scale*y,scale*z);
 	return result;
 }
 
@@ -124,18 +127,25 @@ void MovementController::move(){
     //con OBEntities
     for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
     	*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
-        if(obAux->getType() == "wolf"){
+    	//std::cout << obAux->getType() <<std::endl;
+        //if(obAux->getType() == "wolf"){
+    	if(obAux->getType().find("wolf") != std::string::npos){
+        	std::cout << "ES UN WOLF" <<std::endl;
         	*targetAux = _wolfGuideTarget;  
         	*originAux = obAux->getSceneNode()->getPosition();
-        	speed = getResultVector(originAux, targetAux); 
-        	speed->normalise(); //???
+        	speed = getResultVector(originAux, targetAux, NPC_SPEED); 
+        	speed = new Ogre::Vector3(5,0,0);
+        	//speed->normalise(); //???
         	obAux->getRigidBody()->setLinearVelocity(*speed); 
         }
-        else if(obAux->getType() == "pig"){
+        else if(obAux->getType().find("pig") != std::string::npos){
+        //else if(obAux->getType() == "pig"){
+        	std::cout << "ES UN PIG" <<std::endl;
         	*targetAux = _pigGuide->getPosition();
         	*originAux = obAux->getSceneNode()->getPosition();
-        	speed = getResultVector(originAux, targetAux);
-        	speed->normalise(); //???
+        	speed = getResultVector(originAux, targetAux, NPC_SPEED);
+        	speed = new Ogre::Vector3(5,0,0);
+        	//speed->normalise(); //???
         	obAux->getRigidBody()->setLinearVelocity(*speed); 
         	//ver como queda. Si no, tener un vector con los pigs y que el primero siga al guia, el segundo al primero y asi
         	//otra opcion, varios pigGuides (2 o 3) y que cada pig siga a uno al azar
