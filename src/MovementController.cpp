@@ -163,7 +163,7 @@ void MovementController::moveOne(OBEntity *obAux, Ogre::Vector3 *speed){
 	if(*speed != vect){
 		obAux->getRigidBody()->setLinearVelocity(*speed);
 	}
-	Ogre::Vector3 vect1 (1,0,0);
+	Ogre::Vector3 vect1 (1,0,1);
 	obAux->getRigidBody()->setLinearVelocity(vect1);
 
 	/*else if(obAux->getRigidBody()->getLinearVelocity() != *speed){

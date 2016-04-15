@@ -62,8 +62,8 @@ PlayState::enter ()
   node->attachObject(static_cast <SimpleRenderable *>(_debugDrawer));
   // Creacion del mundo (definicion de los limites y la gravedad) ---
   AxisAlignedBox worldBounds = AxisAlignedBox (
-    Vector3 (-10000, -10000, -10000), 
-    Vector3 (10000,  10000,  10000));
+    Vector3 (-1000, -1000, -1000), 
+    Vector3 (1000,  1000,  1000));
   Vector3 gravity = Vector3(0, -9.8, 0);
 
   _world = new OgreBulletDynamics::DynamicsWorld(_sceneMgr,
@@ -408,12 +408,17 @@ CEGUI::MouseButton PlayState::convertMouseButton(OIS::MouseButtonID id)
 void PlayState::CreateInitialWorld() {
   // Creacion de la entidad y del SceneNode ------------------------
   Plane plane1(Vector3(0,1,0), 0);    // Normal y distancia
+
+  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create( "GroundJ", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+  Ogre::TextureUnitState* tuisTexture = mat->getTechnique(0)->getPass(0)->createTextureUnitState("ground2.jpg");
+
   MeshManager::getSingleton().createPlane("p1",
   ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane1,
-  200, 200, 1, 1, true, 1, 20, 20, Vector3::UNIT_Z);
-  SceneNode* node = _sceneMgr->createSceneNode("ground");
+  200, 200, 1, 1, true, 1, 35, 35, Vector3::UNIT_Z);
+  SceneNode* node = _sceneMgr->createSceneNode("groundJ");
   Entity* groundEnt = _sceneMgr->createEntity("planeEnt", "p1");
-  groundEnt->setMaterialName("Ground");
+  groundEnt->setMaterialName("GroundJ");
   node->attachObject(groundEnt);
   _sceneMgr->getRootSceneNode()->addChild(node);
 
