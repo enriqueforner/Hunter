@@ -27,10 +27,12 @@
 #include "GameState.h"
 #include <CEGUI.h>
 
+#include "PauseScene.h"
+
 class PauseState : public Ogre::Singleton<PauseState>, public GameState
 {
  public:
-  PauseState() {}
+  PauseState();
 
   void enter ();
   void exit ();
@@ -52,13 +54,14 @@ class PauseState : public Ogre::Singleton<PauseState>, public GameState
   // Heredados de Ogre::Singleton.
   static PauseState& getSingleton ();
   static PauseState* getSingletonPtr ();
-
+  bool continueButtonC(const CEGUI::EventArgs& e);
  protected:
+ 
   Ogre::Root* _root;
   Ogre::SceneManager* _sceneMgr;
   Ogre::Viewport* _viewport;
   Ogre::Camera* _camera;
-
+  PauseScene* _pS;
   bool _exitGame;
 };
 

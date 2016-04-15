@@ -1,7 +1,8 @@
 
 #include "PauseState.h"
-
+#include "PlayState.h"
 template<> PauseState* Ogre::Singleton<PauseState>::msSingleton = 0;
+
 
 void
 PauseState::enter ()
@@ -11,16 +12,19 @@ PauseState::enter ()
   // Se recupera el gestor de escena y la cámara.
   _sceneMgr = _root->getSceneManager("SceneManager");
   _camera = _sceneMgr->getCamera("IntroCamera");
+  
   _viewport = _root->getAutoCreatedWindow()->getViewport(0);
   // Nuevo background colour.
   _viewport->setBackgroundColour(Ogre::ColourValue(0.0, 1.0, 0.0));
-
+  _pS = new PauseScene(_sceneMgr);
+  _pS -> crearCegui();
   _exitGame = false;
 }
 
 void
 PauseState::exit ()
 {
+  
 }
 
 void
@@ -55,7 +59,10 @@ PauseState::keyPressed
 (const OIS::KeyEvent &e) {
   // Tecla p --> Estado anterior.
   if (e.key == OIS::KC_P) {
-    popState();
+     _pS->limpiarpantallaCEGUI();
+    if(_pS->destroyCegui()){
+      popState();
+    }
   }
 }
 
@@ -117,4 +124,12 @@ CEGUI::MouseButton PauseState::convertMouseButton(OIS::MouseButtonID id)
       ceguiId = CEGUI::LeftButton;
     }
   return ceguiId;
+}
+
+bool PauseState::continueButtonC(const CEGUI::EventArgs& e){
+    _pS->limpiarpantallaCEGUI();
+    if(_pS->destroyCegui()){
+       popState();
+    }
+    return true; 
 }

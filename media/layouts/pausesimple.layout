@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout version="4" >
+    <Window type="DefaultWindow" name="PauseSimple" >
+        <Property name="Area" value="{{0,-4},{0,-7},{1,-4},{1,-7}}" />
+        <Property name="MaxSize" value="{{1,0},{1,0}}" />
+        <Window type="OgreTray/Group" name="Group" >
+            <Property name="Area" value="{{0,242},{0,142},{0.3,218},{0.3,89}}" />
+            <Property name="MaxSize" value="{{1,0},{1,0}}" />
+        </Window>
+        <Window type="OgreTray/Button" name="Continue" >
+            <Property name="Area" value="{{0,302},{0,184},{0,464},{0,241}}" />
+            <Property name="Text" value="Continue" />
+        </Window>
+    </Window>
+</GUILayout>
