@@ -29,7 +29,8 @@ class MovementController{
 		MovementController(Ogre::SceneManager *sceneMgr);
 		MovementController(Ogre::SceneManager *sceneMgr, std::deque <OgreBulletDynamics::RigidBody*> *bodies, std::deque <OgreBulletCollisions::CollisionShape *> *shapes, std::vector <OBEntity *>  *obEntities);
 		//~MovementController();
-		void move();
+		void moveAll();
+		void moveOne(OBEntity *obAux, Ogre::Vector3 *speed);
 		Ogre::Vector3 *getResultVector(Ogre::Vector3 *origin, Ogre::Vector3 *end, double scale);
 		std::deque <OgreBulletDynamics::RigidBody*> *getRigidBodies();
 		std::deque <OgreBulletCollisions::CollisionShape*>  *getCollisionShapes();
@@ -42,6 +43,7 @@ class MovementController{
 		void setWolfGuideSN(Ogre::SceneNode *wolfGuide);
 		void setPigGuideSN(Ogre::SceneNode *pigGuide);
 		void setSceneManager(Ogre::SceneManager *sceneMgr);
+		OBEntity *getOBEntityByType(std::string type);
 
 	private:
 		Ogre::SceneManager *_sceneMgr;

@@ -22,9 +22,10 @@ PhysicsController::PhysicsController(){
 	_latestNodeCol = "none";
 }
 
-PhysicsController::PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world){
+PhysicsController::PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world, MovementController * movementController ){
 	_sceneMgr = sceneMgr;
 	_world = world;
+	_movementController = movementController;
 	//_obEntities = obEntities;
 	_firstCol = true;
 	_latestNodeCol = "none";
@@ -39,6 +40,9 @@ Ogre::SceneManager *PhysicsController::getSceneManager(){
 OgreBulletDynamics::DynamicsWorld *PhysicsController::getWorld(){
 	return _world;
 }
+MovementController *PhysicsController::getMovementController(){
+	return _movementController;
+}
 // std::vector <OBEntity*> *PhysicsController::getOBEntities(){
 // 	return _obEntities;
 // }
@@ -48,6 +52,9 @@ void PhysicsController::setSceneManager(Ogre::SceneManager *sceneMgr){
 }
 void PhysicsController::setWorld(OgreBulletDynamics::DynamicsWorld *world){
 	_world = world;
+}
+void PhysicsController::setMovementController(MovementController *movementController){
+	_movementController = movementController;
 }
 // void PhysicsController::setOBEntities(std::vector <OBEntity*> *obEntities){
 // 	_obEntities = obEntities;
@@ -75,7 +82,8 @@ Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los
     //std::ostringstream os;
     //os << "CerdoMaloE" << i;
     //Ogre::SceneNode* drain = _sceneMgr->getSceneNode("CerdoMaloE");
-    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("pig0");  
+    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("pig2");  
+    Ogre::Vector3 vect (1,0,0);
 
     OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
     
@@ -102,6 +110,11 @@ Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los
           //delete node;
 
         }
+      }
+      else if (node && node->getName().compare("Redil")==0){
+      	std::cout<< "ANTES "<<_movementController->getOBEntityByType("pig2")->getRigidBody()->getLinearVelocity() << std::endl;
+      	_movementController->moveOne(_movementController->getOBEntityByType("pig2"), &vect);
+      	std::cout<< "DESPUES "<<_movementController->getOBEntityByType("pig2")->getRigidBody()->getLinearVelocity() << std::endl;
       }
     }
     //} 

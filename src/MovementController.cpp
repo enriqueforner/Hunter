@@ -110,7 +110,7 @@ Ogre::Vector3 *MovementController::getResultVector(Ogre::Vector3 *origin, Ogre::
 	return result;
 }
 
-void MovementController::move(){
+void MovementController::moveAll(){
 	/*MOVIMIENTO DE PRUEBA
 	for(std::deque<OgreBulletDynamics::RigidBody *>::iterator it = _bodies->begin(); it != _bodies->end(); ++it) {
           (*it) -> setLinearVelocity(Ogre::Vector3(0,0,1));  
@@ -127,26 +127,27 @@ void MovementController::move(){
     //con OBEntities
     for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
     	*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+    	//std::cout<< obAux->getType() << std::endl;
     	//std::cout << obAux->getType() <<std::endl;
         //if(obAux->getType() == "wolf"){
     	if(obAux->getType().find("wolf") != std::string::npos){
-        	std::cout << "ES UN WOLF" <<std::endl;
+        	//std::cout << "ES UN WOLF" <<std::endl;
         	*targetAux = _wolfGuideTarget;  
         	*originAux = obAux->getSceneNode()->getPosition();
         	speed = getResultVector(originAux, targetAux, NPC_SPEED); 
-        	speed = new Ogre::Vector3(5,0,0);
+        	speed = new Ogre::Vector3(1,0,0);
         	//speed->normalise(); //???
-        	obAux->getRigidBody()->setLinearVelocity(*speed); 
+        	moveOne(obAux,speed);
         }
         else if(obAux->getType().find("pig") != std::string::npos){
         //else if(obAux->getType() == "pig"){
-        	std::cout << "ES UN PIG" <<std::endl;
-        	*targetAux = _pigGuide->getPosition();
-        	*originAux = obAux->getSceneNode()->getPosition();
-        	speed = getResultVector(originAux, targetAux, NPC_SPEED);
-        	speed = new Ogre::Vector3(5,0,0);
+        	//std::cout << "ES UN PIG" <<std::endl;
+        	//*targetAux = _pigGuide->getPosition();
+        	//*originAux = obAux->getSceneNode()->getPosition();
+        	//speed = getResultVector(originAux, targetAux, NPC_SPEED);
+        	speed = new Ogre::Vector3(0,0,1);
         	//speed->normalise(); //???
-        	obAux->getRigidBody()->setLinearVelocity(*speed); 
+        	moveOne(obAux,speed);
         	//ver como queda. Si no, tener un vector con los pigs y que el primero siga al guia, el segundo al primero y asi
         	//otra opcion, varios pigGuides (2 o 3) y que cada pig siga a uno al azar
 
@@ -156,4 +157,31 @@ void MovementController::move(){
     }
 }
 
+void MovementController::moveOne(OBEntity *obAux, Ogre::Vector3 *speed){
+	Ogre::Vector3 vect (0,0,1);
+	//if(obAux->getRigidBody()->getLinearVelocity() != vect){
+	if(*speed != vect){
+		obAux->getRigidBody()->setLinearVelocity(*speed);
+	}
+	Ogre::Vector3 vect1 (1,0,0);
+	obAux->getRigidBody()->setLinearVelocity(vect1);
+
+	/*else if(obAux->getRigidBody()->getLinearVelocity() != *speed){
+		obAux->getRigidBody()->setLinearVelocity(*speed);
+	}*/
+	
+	// Ogre::Vector3 vel (1,0,0);
+	// obAux->getRigidBody()->setLinearVelocity(vel);
+}
+OBEntity * MovementController::getOBEntityByType(std::string type){
+	OBEntity *obAux = new OBEntity("none");
+	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
+		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		if(obAux->getType().compare(type)==0){
+			return obAux;
+		}
+	}
+	obAux = new OBEntity("none");	
+	return obAux;
+}
 

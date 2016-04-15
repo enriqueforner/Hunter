@@ -101,7 +101,7 @@ PlayState::enter ()
 
   //Crear el movementcontroller y el physicscontroller
   _movementController = new MovementController(_sceneMgr,&_bodies,&_shapes,&_obEntities);
-  _physicsController = new PhysicsController(_sceneMgr, _world);
+  _physicsController = new PhysicsController(_sceneMgr, _world,_movementController);
 
 
   _exitGame = false;
@@ -177,9 +177,9 @@ PlayState::frameStarted
   }
   //DetectCollisionPig();
   _physicsController->detectCollision();  //Este es el bueno. Hay que cambiarlo para que compruebe colisiones sobre todo
-  //_movementController->move();
+  _movementController->moveAll();
 
-  RecorreVectorTAOAnadirMovimientoConstante();
+  //RecorreVectorTAOAnadirMovimientoConstante();
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
   return true;
@@ -657,11 +657,15 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
 
       rigidBody->setShape(node, bodyShape,
          0.6 /* Restitucion */, 0.6 /* Friccion */,
-         5.0 /* Masa */, Ogre::Vector3(0, 0, i*20),  // 0,0,35
+         5.0 /* Masa */, Ogre::Vector3(0, 0, i*2.5),  // 0,0,35
          Quaternion::IDENTITY /* Orientacion */);
-      rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
+      //rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
+        rigidBody->setLinearVelocity(Ogre::Vector3::ZERO);
+
+      obentity->setRigidBody(rigidBody);  
    
       _shapesC.push_back(bodyShape);   _bodiesC.push_back(rigidBody);
+      _obEntities.push_back(obentity);
 
       _numEntities ++;
     }

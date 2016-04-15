@@ -3,6 +3,7 @@
 #include "PlayState.h"
 template<> PauseState* Ogre::Singleton<PauseState>::msSingleton = 0;
 
+PauseState::PauseState(){}
 
 void
 PauseState::enter ()
