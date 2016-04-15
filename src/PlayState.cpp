@@ -37,7 +37,7 @@ PlayState::enter ()
   _sceneMgr = _root->getSceneManager("SceneManager");
   _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
   _camera = _sceneMgr->getCamera("IntroCamera");
-  _camera->setPosition(Ogre::Vector3(5,20,20));
+  _camera->setPosition(Ogre::Vector3(25,25,0));
   _camera->lookAt(Ogre::Vector3(0,0,0));
   _camera->setNearClipDistance(5);
   _camera->setFarClipDistance(10000);
@@ -592,7 +592,7 @@ void PlayState::ColocarWolfAndRedilAndPig() {
   rigidObjectR->setShape(nodeRedil, TrimeshR, 0.5, 0.5, 0, Vector3::ZERO, 
        Quaternion::IDENTITY);        
 
-  int posx[5] = {10,15,20,25,30};
+  int posx[5] = {20,30,40,50,60};
   for (int i = 0; i < 5; ++i){
       std::ostringstream os;
       os << "Wolf" << i;
@@ -610,7 +610,7 @@ void PlayState::ColocarWolfAndRedilAndPig() {
           trimeshConverterW->createTrimesh();
       OgreBulletDynamics::RigidBody *rigidObjectW = new 
         OgreBulletDynamics::RigidBody(os.str(), _world);
-      rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(0, 0, posx[i]), 
+      rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(-posx[i], 0, 0), 
         Quaternion::IDENTITY);        
       
   }
@@ -651,7 +651,7 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
       delete trimeshConverter;
 
       obentity->setCollisionShape(bodyShape);
-
+      uniqueName << "rig";
       rigidBody = new OgreBulletDynamics::RigidBody(uniqueName.str() /*+ 
       StringConverter::toString(i),*/, _world);
 
