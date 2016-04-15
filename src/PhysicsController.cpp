@@ -91,7 +91,7 @@ Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los
         node = obOB_B->getRootNode(); /*delete obOB_B;*/
       }
       //El siguiente trozo de codigo sirve para detectar solo el primer "golpe" de una colision
-      if(node){
+      if(node && node->getName().compare("Redil")!=0){
         if(_latestNodeCol.compare(node->getName())!=0){
           _firstCol = true;
         }

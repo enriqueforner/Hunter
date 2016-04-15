@@ -303,9 +303,9 @@ PlayState::mousePressed
     float y = posy/float(_viewport->getActualWidth());  // Pos y normalizada
 
    if(e.state.buttonDown(OIS::MB_Left)){
-      std::cout << "BOTON IZQUIERDO PULSADO\n";
+      //std::cout << "BOTON IZQUIERDO PULSADO\n";
       _shootKeyDown = true;
-      std::cout << "VA?" << std::endl;
+      //std::cout << "VA?" << std::endl;
       // F = 10;
 
       // body = pickBody (p, r, x, y);
@@ -349,7 +349,7 @@ PlayState::mouseReleased
 {
   CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertMouseButton(id));
   double tForce = 0.0;
-  std::cout << "BOTON IZQUIERDO SOLTADO\n";   
+  //std::cout << "BOTON IZQUIERDO SOLTADO\n";   
   if(_timeLastObject <= 0){
     tForce = THROW_FORCE*_keyDownTime;
     if(tForce > MAX_FORCE){
