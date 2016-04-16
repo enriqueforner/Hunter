@@ -86,6 +86,8 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   void DetectCollisionPig();
   void TEDynamicObjectMovement();
   void RecorreVectorTAOAnadirMovimientoConstante();
+  void CreateBackGround();
+  void CrearBosqueAndColina();
   
  protected:
   Ogre::Root* _root;
@@ -122,6 +124,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   std::vector <OgreBulletDynamics::RigidBody*>         _bodiesC;
   std::vector <OgreBulletCollisions::CollisionShape*>  _shapesC;
+
 
 };
 

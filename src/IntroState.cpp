@@ -35,6 +35,7 @@ IntroState::enter ()
   _iS -> ActRanking();
   _lanzaranimacion = true;
   _animState = NULL;
+ 
   _exitGame = false;
 }
 

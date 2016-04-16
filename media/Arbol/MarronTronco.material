@@ -1,0 +1,35 @@
+// MarronTronco genrated by blender2ogre 0.6.0
+
+material MarronTronco 
+{
+    receive_shadows on 
+
+    technique
+    {
+        pass MarronTronco
+        {
+            ambient 0.13758322596549988 0.034903209656476974 0.004256749525666237 1.0
+            diffuse 0.11006658241251976 0.027922568141260262 0.003405399671277398 1.0
+            specular 0.5 0.5 0.5 1.0 12.5
+            emissive 0.0 0.0 0.0 1.0
+
+            alpha_to_coverage off
+            colour_write on
+            cull_hardware clockwise
+            depth_check on
+            depth_func less_equal
+            depth_write on
+            illumination_stage 
+            light_clip_planes off
+            light_scissor off
+            lighting on
+            normalise_normals off
+            polygon_mode solid
+            scene_blend one zero
+            scene_blend_op add
+            shading gouraud
+            transparent_sorting on
+
+        }
+    }
+}

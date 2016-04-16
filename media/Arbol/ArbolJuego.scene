@@ -1,0 +1,55 @@
+<scene exported_by="javimendo" previous_export_time="0" formatVersion="1.0.1" export_time="1460820029.0763373" >
+  <nodes >
+    <node name="ArbolJuego" >
+      <position z="0.145625" x="-0.371686" y="0.197270" />
+      <rotation qz="-0.000000" qx="0.000000" qy="0.000000" qw="1.000000" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity mass="1.0" physics_type="STATIC" lock_rot_y="False" anisotropic_friction="False" lock_rot_x="False" damping_trans="0.03999999910593033" friction_x="1.0" ghost="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" friction_y="1.0" mass_radius="1.0" name="ArbolJuego" velocity_max="0.0" friction_z="1.0" inertia_tensor="0.4000000059604645" meshFile="ArbolJuego.mesh" velocity_min="0.0" damping_rot="0.10000000149011612" lock_rot_z="False" actor="False" />
+    </node>
+    <node name="Lamp" >
+      <position z="-1.005454" x="4.076245" y="5.903862" />
+      <rotation qz="-0.272171" qx="0.169076" qy="0.755880" qw="0.570947" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light shadow="true" powerScale="1.0" type="point" name="Lamp" >
+        <position z="-1.005454" x="4.076245" y="5.903862" />
+        <lightAttenuation range="5000" quadratic="0.0" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse r="1.0" b="1.0" g="1.0" />
+        <colourSpecular r="1.0" b="1.0" g="1.0" />
+        <colourShadow r="1.0" b="1.0" g="1.0" />
+      </light>
+    </node>
+    <node name="Camera" >
+      <position z="6.507640" x="7.481132" y="5.343665" />
+      <rotation qz="-0.212922" qx="0.481707" qy="0.334251" qw="0.781600" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <camera projectionType="perspective" fov="0.5033799435163735" name="Camera" >
+        <clipping farPlaneDist="100.0" near="0.10000000149011612" nearPlaneDist="0.10000000149011612" far="100.0" />
+      </camera>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/home/javimendo/Escritorio/Hunter/media/Arbol/MarronTronco.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/javimendo/Escritorio/Hunter/media/Arbol/VerdeHoja.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourDiffuse r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourAmbient r="0.0" b="0.0" g="0.0" />
+    <colourBackground r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+  </environment>
+</scene>

@@ -43,7 +43,7 @@ PlayState::enter ()
   _camera->setFarClipDistance(10000);
   _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
   // Nuevo background colour.
-  _viewport->setBackgroundColour(Ogre::ColourValue(0.0, 0.0, 1.0));
+  _viewport->setBackgroundColour(Ogre::ColourValue(36.0f, 36.0f, 126.0f, 0.0f));
   double width = _viewport->getActualWidth();
   double height = _viewport->getActualHeight();
   _camera->setAspectRatio(width / height);
@@ -448,6 +448,7 @@ void PlayState::CreateInitialWorld() {
   _bodies.push_back(rigidBodyPlane);
 
   ColocarWolfAndRedilAndPig();
+  CrearBosqueAndColina();
   TEDynamicObjectMovement();
   //CREACION DEL SUPER CERDO CHOCADOR
   Entity *entity2 = _sceneMgr->createEntity("CERDO","CerdoIni.mesh");
@@ -589,6 +590,98 @@ void PlayState::DetectCollisionPig() {
   }
 }
 
+void PlayState::CrearBosqueAndColina(){
+    int distH = 0;
+    int distV = 0;
+    int numArboles = 0;
+    int numArbolesGlobal = 0;
+    int mover = 40;
+    //Parte Izquierda y Parte Derecha
+    for (int i = 0; i < 192; i++){
+      std::stringstream uniqueName;
+      uniqueName <<"tree" << numArbolesGlobal;
+      Entity *entityArbol = _sceneMgr->createEntity(uniqueName.str(),"ArbolJuego.mesh");
+      SceneNode *nodeArbol = _sceneMgr->createSceneNode(uniqueName.str());
+      nodeArbol->attachObject(entityArbol);
+      _sceneMgr->getRootSceneNode()->addChild(nodeArbol);
+
+      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterR = new 
+        OgreBulletCollisions::StaticMeshToShapeConverter(entityArbol);
+
+      OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshR = 
+        trimeshConverterR->createTrimesh(); 
+
+      OgreBulletDynamics::RigidBody *rigidObjectA = new 
+      OgreBulletDynamics::RigidBody(uniqueName.str(), _world);
+        rigidObjectA->setShape(nodeArbol, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(-(0 + distV), 0, mover + distH), 
+        Quaternion::IDENTITY); 
+      _bodies.push_back(rigidObjectA);
+      distH = distH + 8;
+      numArbolesGlobal = numArbolesGlobal + 1;
+      numArboles = numArboles +1;
+      if(numArboles == 8){
+          distV = distV + 6;
+          numArboles = 0;
+          distH = 0;
+      }
+      if(numArbolesGlobal == 96){
+          mover = -100;
+          distV = 0;
+      }
+      //_numEntities++;
+    }
+    //Parte Final
+    distV = 0;
+    distH = 0;
+    for (int i = 0; i < 30; ++i){
+      std::stringstream uniqueName;
+      uniqueName <<"tree" << numArbolesGlobal;
+      Entity *entityArbol = _sceneMgr->createEntity(uniqueName.str(),"ArbolJuego.mesh");
+      SceneNode *nodeArbol = _sceneMgr->createSceneNode(uniqueName.str());
+      nodeArbol->attachObject(entityArbol);
+      _sceneMgr->getRootSceneNode()->addChild(nodeArbol);
+
+      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterR = new 
+        OgreBulletCollisions::StaticMeshToShapeConverter(entityArbol);
+
+      OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshR = 
+        trimeshConverterR->createTrimesh(); 
+
+      OgreBulletDynamics::RigidBody *rigidObjectA = new 
+      OgreBulletDynamics::RigidBody(uniqueName.str(), _world);
+        rigidObjectA->setShape(nodeArbol, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(-85 -(distV), 0, -47 + distH), 
+        Quaternion::IDENTITY); 
+      _bodies.push_back(rigidObjectA);
+      numArbolesGlobal = numArbolesGlobal + 1;
+      distH = distH + 7;
+      if(i==14){
+          distV = distV + 6;
+          distH = 3;
+      }
+    }
+
+
+    Entity *entityColina = _sceneMgr->createEntity("Colina","ColinaJugador.mesh");
+    SceneNode *nodeColina = _sceneMgr->createSceneNode("Colina");
+    nodeColina->attachObject(entityColina);
+    _sceneMgr->getRootSceneNode()->addChild(nodeColina);
+
+    OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterR = new 
+      OgreBulletCollisions::StaticMeshToShapeConverter(entityColina);
+
+    OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshR = 
+      trimeshConverterR->createTrimesh(); 
+
+    OgreBulletDynamics::RigidBody *rigidObjectColina = new 
+    OgreBulletDynamics::RigidBody("Colina", _world);
+      rigidObjectColina->setShape(nodeColina, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(55,0.50,0), 
+      Quaternion::IDENTITY); 
+    _bodies.push_back(rigidObjectColina);
+
+
+}
+
+
 void PlayState::ColocarWolfAndRedilAndPig() {
   // CREACION REDIL PARA PONER ANIMALES
   Entity *entityRedil = _sceneMgr->createEntity("Redil","Redil.mesh");
@@ -693,6 +786,19 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
     }
  }
  
+ void PlayState::CreateBackGround(){
+    MaterialPtr mat = MaterialManager::getSingleton().getByName("AzulCielo");
+    Rectangle2D* rect = new Rectangle2D(true);
+    rect->setCorners(-1.0, 1.0, 1.0, -1.0);
+    rect->setMaterial("AzulCielo");
+    rect->setRenderQueueGroup(RENDER_QUEUE_BACKGROUND);
+    // Set the bounding box to something big
+    rect->setBoundingBox(AxisAlignedBox(-100000.0*Vector3::UNIT_SCALE, 100000.0*Vector3::UNIT_SCALE));
+
+    // Attach background to the scene
+    SceneNode* node = _sceneMgr->getRootSceneNode()->createChildSceneNode("AzulCielo");
+    node->attachObject(rect);
+}
 
 
 //CODIGO DEL CHOQUE CON LOBOS

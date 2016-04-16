@@ -63,7 +63,7 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
   bool retroceder_r(const CEGUI::EventArgs& e);
   bool _lanzaranimacion;
   CEGUI::Renderer * getRenderer();
-  
+
  protected:
   Ogre::Root* _root;
   Ogre::SceneManager* _sceneMgr;
