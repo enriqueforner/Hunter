@@ -101,7 +101,7 @@ PlayState::enter ()
 
   //Crear el movementcontroller y el physicscontroller
   _movementController = new MovementController(_sceneMgr,&_bodies,&_shapes,&_obEntities);
-  _physicsController = new PhysicsController(_sceneMgr, _world,_movementController);
+  _physicsController = new PhysicsController(_sceneMgr, _world,_movementController, &_obEntities);
 
 
   _exitGame = false;
@@ -217,8 +217,15 @@ PlayState::keyPressed
   else{
     _keyDownTime = 0.0;
   }
-  if (e.key == OIS::KC_D) _world->setShowDebugShapes (true); 
-  if (e.key == OIS::KC_H) _world->setShowDebugShapes (false); 
+  // if (e.key == OIS::KC_D) _world->setShowDebugShapes (true); 
+  if (e.key == OIS::KC_H){
+    OBEntity *obAux = new OBEntity("none");
+    std::cout << "OBEntities" << std::endl;
+    for(std::vector<OBEntity *>::iterator it = _obEntities.begin(); it != _obEntities.end(); ++it) {
+      *obAux = **it;
+      std::cout << obAux->getType() <<std::endl;
+    }
+  } 
   if (e.key == OIS::KC_A){ //AerialCamera
     _root->getAutoCreatedWindow()->removeAllViewports();
     _viewport = _root->getAutoCreatedWindow()->addViewport(_aerialCamera);
@@ -526,6 +533,7 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
   _trackedBody = rigidBody;
   _obEntities.push_back(obentity);
+  obentity->setIndex(_obEntities.size()-1);
 }
 
 //SOLO DETECTA LA COLISION CON EL CERDO QUE SE ESTA MOVIENDO
@@ -674,7 +682,7 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
    
       _shapesC.push_back(bodyShape);   _bodiesC.push_back(rigidBody);
       _obEntities.push_back(obentity);
-
+      obentity->setIndex(_obEntities.size()-1);
       _numEntities ++;
     }
  } 

@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #define THROW_FORCE 50.0
 #define T_SPEED 20.0
@@ -19,16 +20,18 @@
 //MUDAR LO DE LAS COLISIONES A ESTA CLASE
 PhysicsController::PhysicsController(){
 	_firstCol = true;
-	_latestNodeCol = "none";
+	_latestNodeCol1 = "none";
+	_latestNodeCol2 = "none";
 }
 
-PhysicsController::PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world, MovementController * movementController ){
+PhysicsController::PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world, MovementController * movementController, std::vector <OBEntity*> *obEntities){
 	_sceneMgr = sceneMgr;
 	_world = world;
 	_movementController = movementController;
-	//_obEntities = obEntities;
+	_obEntities = obEntities;
 	_firstCol = true;
-	_latestNodeCol = "none";
+	_latestNodeCol1 = "none";
+	_latestNodeCol2 = "none";
 
 }
 
@@ -61,8 +64,11 @@ void PhysicsController::setMovementController(MovementController *movementContro
 // }
 
 
-Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los casos, colisiones de objetos de X tipo con X tipo y tal
-  Ogre::Vector2 colliders (0,0);
+void PhysicsController::detectOBEntityCollision(OBEntity *OBEntity){  //hay que ponerle todos los casos, colisiones de objetos de X tipo con X tipo y tal
+  //Ogre::Vector2 colliders (0,0);
+  bool A = false;
+  bool B = false;
+  int discrepancies = 0;
   //CODIGO COMENTADO PARA DETECTAR COLISIONES EN LOS DEMAS OBJETOS YA SEA EN MOVIMENTO O QUIETOS
   btCollisionWorld *bulletWorld = _world->getBulletCollisionWorld();
   // DE MOMENTO DETECTA COLISIONES SI PASA MUY CERCA
@@ -82,7 +88,7 @@ Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los
     //std::ostringstream os;
     //os << "CerdoMaloE" << i;
     //Ogre::SceneNode* drain = _sceneMgr->getSceneNode("CerdoMaloE");
-    Ogre::SceneNode* drain = _sceneMgr->getSceneNode("pig2");  
+    Ogre::SceneNode* drain = _sceneMgr->getSceneNode(OBEntity->getType());  //Drain es el objeto del que nos interesan las colisiones
     Ogre::Vector3 vect (1,0,0);
 
     OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
@@ -90,42 +96,167 @@ Ogre::Vector2 PhysicsController::detectCollision(){  //hay que ponerle todos los
     OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
     OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
 
-    if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
-      Ogre::SceneNode* node = NULL;
-      if ((obOB_A != obDrain) && (obOB_A)) {
-        node = obOB_A->getRootNode(); /*delete obOB_A;*/
-      }
-      else if ((obOB_B != obDrain) && (obOB_B)) {
-        node = obOB_B->getRootNode(); /*delete obOB_B;*/
-      }
-      //El siguiente trozo de codigo sirve para detectar solo el primer "golpe" de una colision
-      if(node && node->getName().compare("Redil")!=0){
-        if(_latestNodeCol.compare(node->getName())!=0){
-          _firstCol = true;
-        }
-        _latestNodeCol = node->getName();
-        if (_firstCol) {
-          std::cout << "DETECTED COLLISION: " << node->getName() << std::endl; 
-          _firstCol = false;
-          //delete node;
+    if ((obOB_A == obDrain) || (obOB_B == obDrain)) {  //Si se detecta colision con el objeto del que nos interesa 
+      /*std::cout << "HASTA AQUI TODO VA BIEN" << std::endl;
+      std::string nameA = obOB_A->getRootNode()->getName().substr(0,3);
+      std::cout << "nameA "<< nameA << std::endl;
+      std::string nameB = obOB_B->getRootNode()->getName().substr(0,3);
+      std::cout << "nameB "<< nameB << std::endl;*/
+      	//Cambiar todos los tipos de obentity a cosas de 4 letras: wolf, rock, rpig (o boar). Creo que no va a hacer falta
+      	Ogre::SceneNode* node = NULL;
+      	std::cout << "COGEMOS NODE" << std::endl;
+	    if ((obOB_A != obDrain) && (obOB_A)) {
+	      node = obOB_A->getRootNode(); 
+	      bool A = true;
+	      /*delete obOB_A;*/
+	    }
+	    else if ((obOB_B != obDrain) && (obOB_B)) {
+	      node = obOB_B->getRootNode(); 
+	      bool B = true;
+	      /*delete obOB_B;*/
+	    }
 
-        }
-      }
-      else if (node && node->getName().compare("Redil")==0){
-      	std::cout<< "ANTES "<<_movementController->getOBEntityByType("pig2")->getRigidBody()->getLinearVelocity() << std::endl;
-      	_movementController->moveOne(_movementController->getOBEntityByType("pig2"), &vect);
-      	std::cout<< "DESPUES "<<_movementController->getOBEntityByType("pig2")->getRigidBody()->getLinearVelocity() << std::endl;
-      }
+	    if(node){
+	      std::string nodeType = node->getName().substr(0,3); 	
+	      //std::cout << "nodeType "<< nodeType << std::endl;
+	      if(OBEntity->getType().find(nodeType) != 0){ //Si el tipo de los 2 nodos no es el mismo
+	      	//El siguiente trozo de codigo sirve para detectar solo el primer "golpe" de una colision
+	      	if(node->getName().compare("Redil")!=0){  
+	          if(_latestNodeCol1.compare(node->getName())!=0){
+	          	discrepancies ++;
+	          }
+	          if(_latestNodeCol2.compare(OBEntity->getType())!=0){
+	          	discrepancies ++;
+	          }
+	          if(_latestNodeCol1.compare(OBEntity->getType())!=0){
+	          	discrepancies ++;
+	          }
+	          if(_latestNodeCol2.compare(node->getName())!=0){
+	          	discrepancies ++;
+	          }    
+	          if(discrepancies > 2){
+	          	_firstCol = true;
+	          }
+	          _latestNodeCol1 = node->getName();
+	          _latestNodeCol2 = OBEntity->getType();
+	          if (_firstCol) {
+	            std::cout << "DETECTED COLLISION: " << OBEntity->getType() <<" collided with "<< node->getName() << std::endl; 
+	            if(node->getName().find("rock")==0){
+	    	      //delete node;
+	      		  //std::cout << "Node es un rock" << std::endl;
+	    	      //deleteNode(node->getName());
+	    	      //return;
+	    	    }
+	    	    else if(OBEntity->getType().find("rock")==0){
+	    	      //delete node;
+	    		  //std::cout << "OBEntity es un rock" << std::endl;
+	    	      //deleteOBEntity(OBEntity);
+	    	      //return;
+	    	    }
+	            _firstCol = false;
+	            //delete node;
+	          }
+
+	          if(A){
+	            delete obOB_A;
+	            A = false;
+	          }
+	          if(B){
+	           	delete obOB_B;
+	           	B = false;
+	          }
+	          if(node){
+	          	std::cout << "if node" << std::endl;
+	            //_sceneMgr->getRootSceneNode()->removeAndDestroyChild(node->getName());
+	            _sceneMgr->getRootSceneNode()->removeAndDestroyChild(node->getName());
+	            /*_sceneMgr->getRootSceneNode()->getChild(node->getName());
+	            _sceneMgr->getRootSceneNode()->removeChild(node->getName());*/
+	            std::cout << "nodo destruido" << std::endl;
+	          }
+	        }
+	        /*if (node && node->getName().compare("Redil")==0){
+	          /*std::cout<< "ANTES "<<_movementController->getOBEntityByType(OBEntity->getType())->getRigidBody()->getLinearVelocity() << std::endl;
+	          _movementController->moveOne(_movementController->getOBEntityByType(OBEntity->getType()), &vect);
+	          std::cout<< "DESPUES "<<_movementController->getOBEntityByType(OBEntity->getType())->getRigidBody()->getLinearVelocity() << std::endl;
+	          
+	        }*/
+	      	
+	      }	
+	      
+	    }
+	    
     }
     //} 
   }
-  return colliders;
+  //return colliders;
 }
 
 //std::vector <OBEntity> _obEntities; //Enemigos, proyectiles, escenario...
 
 
+void PhysicsController::detectCollision(){
+	OBEntity *obAux = new OBEntity("none");
+	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
+		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		detectOBEntityCollision(obAux);
+	}
+}
 
+void PhysicsController::deleteNode(std::string name){
+	std::cout << name << " has entered deletenode"<< std::endl;
+	Ogre::SceneNode* auxSN = _sceneMgr->getSceneNode(name);
+	std::cout << name << "auxSN cogido"<< std::endl;
+	if(auxSN){
+		delete auxSN;
+		std::cout << name << " node has been deleted"<< std::endl;
+	}
+	else{
+		std::cout << name << " node not found"<< std::endl;
+	}
+}
 
+void PhysicsController::deleteOBEntity(OBEntity *OBEntity){
+	std::string obentityName = "";
+	std::cout << OBEntity->getType() << " has entered deleteOBEntity"<< std::endl;
+	/*if((std::find(_obEntities->begin(), _obEntities->end(), OBEntity)) == _obEntities->end()){
+		std::cout << OBEntity->getType() << " not found"<< std::endl;
+	}*/
+	obentityName = _obEntities->at(OBEntity->getIndex())->getType();
+	if(obentityName.compare(OBEntity->getType()) == 0){
+		//El obentity sigue en el vector
+		//quitarlo de _obEntities si esta
+		_obEntities->erase(_obEntities->begin()+OBEntity->getIndex());
+		std::cout <<"obentity has been deleted" << std::endl;
+		deleteNode(OBEntity->getType());
+		//reordenar los indices de las OBEntities
+		reasignIndexes();
+	}
+	else{
+		std::cout << OBEntity->getType() << " not found"<< std::endl;
+	}	
+}
+
+void PhysicsController::reasignIndexes(){
+	int index = 0;
+	OBEntity *obAux = new OBEntity("none");
+	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
+		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		std::cout << obAux->getType() << " " << obAux->getIndex()<<std::endl;
+	}
+
+	index = 0;
+	obAux = new OBEntity("none");
+	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
+		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		obAux->setIndex(index);
+		index ++;
+	}
+	std::cout <<"indexes reasigned" << std::endl;
+
+	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
+		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		std::cout << obAux->getType() << " " << obAux->getIndex()<<std::endl;
+	}
+}
 
 
