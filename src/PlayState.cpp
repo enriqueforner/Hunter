@@ -206,6 +206,9 @@ PlayState::keyPressed
   if (e.key == OIS::KC_P) {
     pushState(PauseState::getSingletonPtr());
   }
+  if (e.key == OIS::KC_M) {
+    pushState(FinalState::getSingletonPtr());
+  }
   if ((e.key == OIS::KC_B) && (_timeLastObject <= 0)) 
     //AddDynamicObject(box);
   if (e.key == OIS::KC_E){

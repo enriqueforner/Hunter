@@ -24,6 +24,7 @@
 #include "IntroState.h"
 #include "PlayState.h"
 #include "PauseState.h"
+#include "FinalState.h"
 
 #include <iostream>
 
@@ -35,11 +36,13 @@ int main () {
   IntroState* introState = new IntroState();
   PlayState* playState = new PlayState();
   PauseState* pauseState = new PauseState();
+  FinalState* finalState = new FinalState();
 
   UNUSED_VARIABLE(introState);
   UNUSED_VARIABLE(playState);
   UNUSED_VARIABLE(pauseState);
-    
+  UNUSED_VARIABLE(finalState);
+
   try
     {
       // Inicializa el juego y transición al primer estado.

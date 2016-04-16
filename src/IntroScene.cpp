@@ -127,16 +127,6 @@ void IntroScene::crearWorld(){
     nodelob->setScale(5,5,5);
     nodelob->yaw(Ogre::Degree(150));
     _sceneManager->getRootSceneNode()->addChild(nodelob);
-/*
-    Ogre::Entity* entred = _sceneManager->createEntity("RedilInicio", "Redil.mesh");
-    Ogre::SceneNode* nodered = _sceneManager->createSceneNode("RedilIni");
-    nodered->attachObject(entred);
-    nodered->setScale(5,5,5);
-    
-    nodered->setPosition(-34,5,-30);
-    nodered->yaw(Ogre::Degree(150));
-    _sceneManager->getRootSceneNode()->addChild(nodered);
-*/
 
 
 }

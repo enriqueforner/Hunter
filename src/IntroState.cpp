@@ -212,3 +212,7 @@ void IntroState::loadCEGUI(){
   CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(_sheet);
   
 }
+
+CEGUI::Renderer * IntroState::getRenderer(){
+  return renderer;
+}
