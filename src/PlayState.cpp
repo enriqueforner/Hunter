@@ -99,7 +99,7 @@ PlayState::enter ()
   _mouseRotation = Vector2::ZERO;
   _firstCol = true;
   _latestNodeCol = "none"; 
-
+  _finalGame = false;
   CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
 
   //Crear el movementcontroller y el physicscontroller
@@ -201,6 +201,10 @@ PlayState::frameStarted
   _physicsController->detectCollision();  //Este es el bueno. Hay que cambiarlo para que compruebe colisiones sobre todo
   _movementController->moveAll();
 
+  if(_finalGame){
+      pushState(FinalState::getSingletonPtr());
+  }
+  lifeWolf();
   //RecorreVectorTAOAnadirMovimientoConstante();
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
@@ -896,6 +900,29 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
       //newwolf++;
 
     }  
+ }
+
+ void PlayState::isFinalGame(){
+    _finalGame = true;
+ }
+
+ void PlayState::lifeWolf(){
+    OBEntity *obAux = new OBEntity("name");
+    int deadWolf = 0;
+    int i = 0;
+    for(std::vector<OBEntity *>::iterator it = _obEntities.begin(); it != _obEntities.end(); ++it) {
+      obAux = *it;
+      std::ostringstream os;
+      os << "wolf" <<i;
+      if (obAux->getType().compare(os.str())==0){
+          if (obAux->getHealth()==0){
+              deadWolf = deadWolf +1;
+          }
+      }
+    }
+    if(deadWolf == 19){
+        isFinalGame();
+    }
  }
 
 

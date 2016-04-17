@@ -12,6 +12,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "PlayState.h"
+
 #define THROW_FORCE 50.0
 #define T_SPEED 20.0
 #define CAM_ROTATION_SPEED 20.0
@@ -33,6 +35,7 @@ PhysicsController::PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDyn
 	_latestNodeCol1 = "none";
 	_latestNodeCol2 = "none";
 	_rocks = new std::vector<String>;
+	_finalGame = true;
 }
 
 //~PhysicsController(){}
@@ -196,10 +199,12 @@ void PhysicsController::setMovementController(MovementController *movementContro
 
 void PhysicsController::detectCollision(){
   //CODIGO COMENTADO PARA DETECTAR COLISIONES EN LOS DEMAS OBJETOS YA SEA EN MOVIMENTO O QUIETOS
+  if (_finalGame){
   btCollisionWorld *bulletWorld = _world->getBulletCollisionWorld();
   // DE MOMENTO DETECTA COLISIONES SI PASA MUY CERCA
   int numManifolds = bulletWorld->getDispatcher()->getNumManifolds();
-
+ 
+  	
   for (int i=0;i<numManifolds;i++) {
     btPersistentManifold* contactManifold = 
       bulletWorld->getDispatcher()->getManifoldByIndexInternal(i);
@@ -282,7 +287,7 @@ void PhysicsController::detectCollision(){
     		}
     		else if(nodeB->getName().find("Redil") == 0){
     			node = obOB_B->getRootNode();
-    			//FINAL GAME
+    			_finalGame = false;
     			goodCollision = false;
     		}
     		else if(nodeB->getName().find("wolf") == 0){
@@ -298,18 +303,23 @@ void PhysicsController::detectCollision(){
         			int points = getOBEntitieByName(nodeB->getName())->decreaseHealth();
         			std::cout << points << std::endl;
         			std::cout << getOBEntitieByName(nodeA->getName())->getHealth() << std::endl;
+        			
         		}else if (nodeA->getName().find("wolf") == 0){
         			std::cout << nodeA->getName() << std::endl;
         			int points = getOBEntitieByName(nodeA->getName())->decreaseHealth();
         			std::cout << points << std::endl;
         			std::cout << getOBEntitieByName(nodeA->getName())->getHealth() << std::endl;
+        			
         		}
         		_rocks->push_back(node->getName());
         		//_sceneMgr->getRootSceneNode()->removeAndDestroyChild (node->getName());
     		}
     	}
     }
-  }  
+  } 
+  } else{
+  		PlayState::getSingletonPtr()->isFinalGame();
+  }
 }
 
 OBEntity* PhysicsController::getOBEntitieByName(std::string name){

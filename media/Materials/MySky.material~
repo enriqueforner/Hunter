@@ -8,7 +8,7 @@ material MySky
             depth_write off
             texture_unit
             {
-                cubic_texture FullMoonFront2048.png FullMoonBack2048.png FullMoonRight2048.png FullMoonLeft2048.png FullMoonUp2048.png FullMoonDown2048.png separateUV
+                cubic_texture FullMoonFront2048.png FullMoonBack2048.png FullMoonRight2048.png FullMoonLeft2048.png FullMoonUp2048.png hills_dn.tga separateUV
                 tex_address_mode clamp
             }
         }

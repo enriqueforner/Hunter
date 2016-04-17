@@ -90,6 +90,9 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   void RecorreVectorTAOAnadirMovimientoConstante();
   void CreationWolf();
   void CrearBosqueAndColina();
+  void isFinalGame();
+  void lifeWolf();
+
 
  protected:
   Ogre::Root* _root;
@@ -115,7 +118,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   bool _shootKeyDown;
   bool _firstCol;
   std::string _latestNodeCol;
-
+  bool _finalGame;
   Ogre::Camera* _aerialCamera;
   Ogre::Camera* _projectileCamera;
   OgreBulletDynamics::RigidBody* _trackedBody;
