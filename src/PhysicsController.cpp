@@ -64,7 +64,7 @@ void PhysicsController::setMovementController(MovementController *movementContro
 // }
 
 
-void PhysicsController::detectOBEntityCollision(OBEntity *OBEntity){  //hay que ponerle todos los casos, colisiones de objetos de X tipo con X tipo y tal
+/*void PhysicsController::detectOBEntityCollision(OBEntity *OBEntity){  //hay que ponerle todos los casos, colisiones de objetos de X tipo con X tipo y tal
   //Ogre::Vector2 colliders (0,0);
   bool A = false;
   bool B = false;
@@ -101,19 +101,19 @@ void PhysicsController::detectOBEntityCollision(OBEntity *OBEntity){  //hay que 
       std::string nameA = obOB_A->getRootNode()->getName().substr(0,3);
       std::cout << "nameA "<< nameA << std::endl;
       std::string nameB = obOB_B->getRootNode()->getName().substr(0,3);
-      std::cout << "nameB "<< nameB << std::endl;*/
+      std::cout << "nameB "<< nameB << std::endl;
       	//Cambiar todos los tipos de obentity a cosas de 4 letras: wolf, rock, rpig (o boar). Creo que no va a hacer falta
       	Ogre::SceneNode* node = NULL;
       	std::cout << "COGEMOS NODE" << std::endl;
 	    if ((obOB_A != obDrain) && (obOB_A)) {
 	      node = obOB_A->getRootNode(); 
 	      bool A = true;
-	      /*delete obOB_A;*/
+	      /*delete obOB_A;
 	    }
 	    else if ((obOB_B != obDrain) && (obOB_B)) {
 	      node = obOB_B->getRootNode(); 
 	      bool B = true;
-	      /*delete obOB_B;*/
+	      /*delete obOB_B;
 	    }
 
 	    if(node){
@@ -170,7 +170,7 @@ void PhysicsController::detectOBEntityCollision(OBEntity *OBEntity){  //hay que 
 	            //_sceneMgr->getRootSceneNode()->removeAndDestroyChild(node->getName());
 	            _sceneMgr->getRootSceneNode()->removeAndDestroyChild(node->getName());
 	            /*_sceneMgr->getRootSceneNode()->getChild(node->getName());
-	            _sceneMgr->getRootSceneNode()->removeChild(node->getName());*/
+	            _sceneMgr->getRootSceneNode()->removeChild(node->getName());
 	            std::cout << "nodo destruido" << std::endl;
 	          }
 	        }
@@ -179,7 +179,7 @@ void PhysicsController::detectOBEntityCollision(OBEntity *OBEntity){  //hay que 
 	          _movementController->moveOne(_movementController->getOBEntityByType(OBEntity->getType()), &vect);
 	          std::cout<< "DESPUES "<<_movementController->getOBEntityByType(OBEntity->getType())->getRigidBody()->getLinearVelocity() << std::endl;
 	          
-	        }*/
+	        }
 	      	
 	      }	
 	      
@@ -190,16 +190,86 @@ void PhysicsController::detectOBEntityCollision(OBEntity *OBEntity){  //hay que 
   }
   //return colliders;
 }
-
+*/
 //std::vector <OBEntity> _obEntities; //Enemigos, proyectiles, escenario...
 
 
 void PhysicsController::detectCollision(){
-	OBEntity *obAux = new OBEntity("none");
-	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
-		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
-		detectOBEntityCollision(obAux);
-	}
+  //CODIGO COMENTADO PARA DETECTAR COLISIONES EN LOS DEMAS OBJETOS YA SEA EN MOVIMENTO O QUIETOS
+  btCollisionWorld *bulletWorld = _world->getBulletCollisionWorld();
+  // DE MOMENTO DETECTA COLISIONES SI PASA MUY CERCA
+  int numManifolds = bulletWorld->getDispatcher()->getNumManifolds();
+
+  for (int i=0;i<numManifolds;i++) {
+    btPersistentManifold* contactManifold = 
+      bulletWorld->getDispatcher()->getManifoldByIndexInternal(i);
+    btCollisionObject* obA = 
+      (btCollisionObject*)(contactManifold->getBody0());
+    btCollisionObject* obB = 
+      (btCollisionObject*)(contactManifold->getBody1());
+    //OgreBulletCollisions::Object *obDrain = _world->findObject(drain);
+    //CHOCAR CON LOBOS
+    /*for (int i = 0; i < 5; ++i){
+        
+    	std::ostringstream os;
+    	os << "Wolf" << i;
+    
+    	Ogre::SceneNode* drain = _sceneMgr->getSceneNode(os.str());
+
+    	OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
+    
+    	OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
+    	OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
+    
+    	if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
+    	  Ogre::SceneNode* node = NULL;
+      	  if ((obOB_A != obDrain) && (obOB_A)) {
+            node = obOB_A->getRootNode(); delete obOB_A;
+          }
+          else if ((obOB_B != obDrain) && (obOB_B)) {
+            node = obOB_B->getRootNode(); delete obOB_B;
+          }
+          //El siguiente trozo de codigo sirve para detectar solo el primer "golpe" de una colision
+      	  if(node){
+        
+            std::cout << "DETECTED COLLISION: " << node->getName() << std::endl; 
+         
+            std::cout << node->getName() << std::endl;
+            _sceneMgr->getRootSceneNode()->removeAndDestroyChild (node->getName());
+         
+          }
+        }
+    //} 
+    }*/
+
+    Ogre::SceneNode* nodeA = NULL;
+    Ogre::SceneNode* nodeB = NULL;
+    
+    OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
+    OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
+
+    nodeA = obOB_A->getRootNode();
+    nodeB = obOB_B->getRootNode();
+
+    if(nodeA && nodeB){
+    	if((nodeA->getName().find("wolf") == 0)||(nodeB->getName().find("wolf") == 0)){
+    		Ogre::SceneNode* node = NULL;
+    		if(nodeA->getName().find("rock") == 0){
+    			node = obOB_A->getRootNode();
+    			delete obOB_A;
+    		}
+    		else if(nodeB->getName().find("rock") == 0){
+    			node = obOB_B->getRootNode();
+    			delete obOB_B;
+    		}
+    		if(node){
+    			std::cout << "DETECTED COLLISION: " << node->getName() << std::endl; 
+        		std::cout << node->getName() << std::endl;
+        		_sceneMgr->getRootSceneNode()->removeAndDestroyChild (node->getName());
+    		}
+    	}
+    }
+  }  
 }
 
 void PhysicsController::deleteNode(std::string name){

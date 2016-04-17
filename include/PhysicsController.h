@@ -30,7 +30,6 @@ class PhysicsController{
 		PhysicsController();
 		PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world, MovementController *movementController, std::vector <OBEntity*> *obEntities); //std::vector <OBEntity*> *obEntities
 		//~PhysicsController();
-		void detectOBEntityCollision(OBEntity *OBEntity);
 		void detectCollision();
 		Ogre::SceneManager *getSceneManager();
 		OgreBulletDynamics::DynamicsWorld *getWorld();

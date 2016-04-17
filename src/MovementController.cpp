@@ -19,19 +19,25 @@
 MovementController::MovementController(Ogre::SceneManager* sceneMgr){
 	_sceneMgr = sceneMgr;
 	//Crear los 2 nodos guia
-	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Redil.mesh");
+	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Lobo.mesh");
   	_wolfGuide = _sceneMgr->createSceneNode("wolfGuide");
   	_wolfGuide->attachObject(wolfGuideEntity);
 
-  	Entity *pigGuideEntity = _sceneMgr->createEntity("pigGuideEntity","Redil.mesh");
+  	Entity *pigGuideEntity = _sceneMgr->createEntity("pigGuideEntity","CerdoIni.mesh");
   	_pigGuide = _sceneMgr->createSceneNode("pigGuide");
   	_pigGuide->attachObject(pigGuideEntity);
 
+  	_sceneMgr->getRootSceneNode()->addChild(_pigGuide);
+  	_sceneMgr->getRootSceneNode()->addChild(_wolfGuide);
+
+  	_pigGuide->setPosition(-20,0,10);
+  	//_wolfGuide->setPosition(20,0,0);
 
   	//_wolfGuide->setVisible(false);
   	//_pigGuide->setVisible(false);
 
   	_wolfGuideTarget =_sceneMgr->getSceneNode("Redil")->getPosition();
+  	_wolfGuide->setPosition(_wolfGuideTarget);
   	std::cout<< "POSICION DEL REDIL: "<<_wolfGuideTarget <<std::endl;
   	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
   	_pigGuidePath = new std::vector <Ogre::Vector3>;
@@ -45,18 +51,25 @@ MovementController::MovementController(Ogre::SceneManager* sceneMgr, std::deque 
 	_obEntities = obEntities;
 	//Crear los 2 nodos guia
 	
-	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Redil.mesh");
+	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Lobo.mesh");
   	_wolfGuide = _sceneMgr->createSceneNode("wolfGuide");
   	_wolfGuide->attachObject(wolfGuideEntity);
 
-  	Entity *pigGuideEntity = _sceneMgr->createEntity("pigGuideEntity","Redil.mesh");
+  	Entity *pigGuideEntity = _sceneMgr->createEntity("pigGuideEntity","CerdoIni.mesh");
   	_pigGuide = _sceneMgr->createSceneNode("pigGuide");
   	_pigGuide->attachObject(pigGuideEntity);
+
+  	_sceneMgr->getRootSceneNode()->addChild(_pigGuide);
+  	_sceneMgr->getRootSceneNode()->addChild(_wolfGuide);
+
+  	_pigGuide->setPosition(-20,0,10);
+  	//_wolfGuide->setPosition(20,0,0);
 
   	//_wolfGuide->setVisible(false);
   	//_pigGuide->setVisible(false);
 
   	_wolfGuideTarget =_sceneMgr->getSceneNode("Redil")->getPosition();
+  	_wolfGuide->setPosition(_wolfGuideTarget);
   	std::cout<< "POSICION DEL REDIL: "<<_wolfGuideTarget <<std::endl;
   	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
   	_pigGuidePath = new std::vector <Ogre::Vector3>;
@@ -132,10 +145,11 @@ void MovementController::moveAll(){
         //if(obAux->getType() == "wolf"){
     	if(obAux->getType().find("wolf") != std::string::npos){
         	//std::cout << "ES UN WOLF" <<std::endl;
-        	*targetAux = _wolfGuideTarget;  
+        	//*targetAux = _wolfGuideTarget; 
+        	*targetAux = _sceneMgr->getSceneNode("Redil")->getPosition(); 
         	*originAux = obAux->getSceneNode()->getPosition();
         	speed = getResultVector(originAux, targetAux, NPC_SPEED); 
-        	speed = new Ogre::Vector3(1,0,0);
+        	//speed = new Ogre::Vector3(1,0,0);
         	//speed->normalise(); //???
         	moveOne(obAux,speed);
         }
@@ -145,7 +159,7 @@ void MovementController::moveAll(){
         	//*targetAux = _pigGuide->getPosition();
         	//*originAux = obAux->getSceneNode()->getPosition();
         	//speed = getResultVector(originAux, targetAux, NPC_SPEED);
-        	speed = new Ogre::Vector3(0,0,1);
+        	//speed = new Ogre::Vector3(0,0,1);
         	//speed->normalise(); //???
         	moveOne(obAux,speed);
         	//ver como queda. Si no, tener un vector con los pigs y que el primero siga al guia, el segundo al primero y asi

@@ -44,6 +44,7 @@ class OBEntity
   OgreBulletDynamics::RigidBody* getRigidBody();
   int getPoints();
   int getIndex();
+  std::vector<Ogre::Vector3> *getPigPath();
 
   void setSceneNode(Ogre::SceneNode* sceneNode);
   //void setType(TEDynamicObject type);
@@ -53,7 +54,9 @@ class OBEntity
   void setPoints(int points);
   int decreaseHealth();
   void setIndex(int index);
-  bool operator== (OBEntity &obEntity1);
+  /*bool operator== (OBEntity &obEntity1);*/
+  void setPigPath();
+  Ogre::Vector3 *getNextPathPoint();
 
  protected:
   Ogre::SceneNode* _sNode;
@@ -64,6 +67,7 @@ class OBEntity
   int _points;
   int _health;
   int _index;
+  std::vector<Ogre::Vector3> *_pigPath;
 };
 
 #endif
