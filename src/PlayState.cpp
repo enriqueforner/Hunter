@@ -180,7 +180,7 @@ PlayState::frameStarted
   }
   //DetectCollisionPig();
   _physicsController->detectCollision();  //Este es el bueno. Hay que cambiarlo para que compruebe colisiones sobre todo
-  //_movementController->moveAll();
+  _movementController->moveAll();
 
   //RecorreVectorTAOAnadirMovimientoConstante();
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
@@ -792,28 +792,60 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
  }
 
  void PlayState::CreationWolf(){
-    int newwolf = 6;
-    for (int i = 0; i < 1; ++i){
-      std::ostringstream os;
-      os << "wolf" << newwolf;
-
-      Entity *entityWolf = _sceneMgr->createEntity(os.str(),"Lobo.mesh");
-      SceneNode *nodeWolf = _sceneMgr->createSceneNode(os.str());
-      nodeWolf->attachObject(entityWolf);
-      nodeWolf-> setPosition(80,0,0);
-      //nodeWolf ->
-      _sceneMgr->getRootSceneNode()->addChild(nodeWolf);
-      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterW = new 
-          OgreBulletCollisions::StaticMeshToShapeConverter(entityWolf);
-
-      OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshW = 
-          trimeshConverterW->createTrimesh();
-      OgreBulletDynamics::RigidBody *rigidObjectW = new 
-        OgreBulletDynamics::RigidBody(os.str(), _world);
-      rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(80, 0, 0), 
-        Quaternion::IDENTITY);        
+    //int newwolf = ;
+    int posH = 4;
+    //int posx[3] = {7,14,21};
+    for (int i = 0; i < 19; ++i){  
+      //TEDynamicObject taO;
+      Entity *entity = NULL;
+      //OBEntity *obentity = new OBEntity(taO);
       
-    }
+      std::stringstream uniqueName;
+      uniqueName <<"wolf" << _numEntities; //uniqueName <<type << _numEntities;
+      
+      OBEntity *obentity = new OBEntity(uniqueName.str()); //type
+      
+      entity = _sceneMgr->createEntity(uniqueName.str(), "Lobo.mesh");     
+
+      SceneNode *node = _sceneMgr->getRootSceneNode()->
+      createChildSceneNode(entity->getName());
+      node->attachObject(entity);
+
+      node->yaw(Ogre::Degree(180));
+
+      obentity->setSceneNode(node);
+
+      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter = NULL; 
+      OgreBulletCollisions::CollisionShape *bodyShape = NULL;
+      OgreBulletDynamics::RigidBody *rigidBody = NULL;
+
+      trimeshConverter = new 
+      OgreBulletCollisions::StaticMeshToShapeConverter(entity);
+      bodyShape = trimeshConverter->createConvex();
+      delete trimeshConverter;
+
+      obentity->setCollisionShape(bodyShape);
+      //uniqueName << "rig";
+      rigidBody = new OgreBulletDynamics::RigidBody(uniqueName.str() /*+ 
+      StringConverter::toString(i),*/, _world);
+
+      rigidBody->setShape(node, bodyShape,
+         0.6 /* Restitucion */, 0.6 /* Friccion */,
+         5.0 /* Masa */, Ogre::Vector3(-70, 0, -40 + posH),  // 0,0,35
+         node->_getDerivedOrientation()/* Orientacion */);
+      //rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
+        rigidBody->setLinearVelocity(Ogre::Vector3::ZERO);
+
+      obentity->setRigidBody(rigidBody);  
+   
+      //_shapesC.push_back(bodyShape);   _bodiesC.push_back(rigidBody);
+      _obEntities.push_back(obentity);
+      obentity->setIndex(_obEntities.size()-1);
+      _numEntities ++;
+      posH = posH + 4;
+      //newwolf++;
+
+    }  
  }
 
 

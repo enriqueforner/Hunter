@@ -276,15 +276,50 @@ void PhysicsController::detectCollision(){
     				}
     			}
     		}
+    		else if(nodeB->getName().find("tree") == 0){
+    			node = obOB_B->getRootNode();
+    			goodCollision = false;
+    		}
+    		else if(nodeB->getName().find("Redil") == 0){
+    			node = obOB_B->getRootNode();
+    			//FINAL GAME
+    			goodCollision = false;
+    		}
+    		else if(nodeB->getName().find("wolf") == 0){
+    			node = obOB_B->getRootNode();
+    			goodCollision = false;
+    		}
     		if(goodCollision){
+    			//POINTS
     			std::cout << "DETECTED COLLISION: " << node->getName() << std::endl; 
-        		std::cout << node->getName() << std::endl;
+        		//std::cout << node->getName() << std::endl;
+        		if (nodeB->getName().find("wolf") == 0){
+        			std::cout << nodeB->getName() << std::endl;
+        			int points = getOBEntitieByName(nodeB->getName())->decreaseHealth();
+        			std::cout << points << std::endl;
+        			std::cout << getOBEntitieByName(nodeA->getName())->getHealth() << std::endl;
+        		}else if (nodeA->getName().find("wolf") == 0){
+        			std::cout << nodeA->getName() << std::endl;
+        			int points = getOBEntitieByName(nodeA->getName())->decreaseHealth();
+        			std::cout << points << std::endl;
+        			std::cout << getOBEntitieByName(nodeA->getName())->getHealth() << std::endl;
+        		}
         		_rocks->push_back(node->getName());
         		//_sceneMgr->getRootSceneNode()->removeAndDestroyChild (node->getName());
     		}
     	}
     }
   }  
+}
+
+OBEntity* PhysicsController::getOBEntitieByName(std::string name){
+	OBEntity *obAux = new OBEntity("name");
+	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
+		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		if (obAux->getType().compare(name)==0){
+			return obAux;
+		}
+	}
 }
 
 void PhysicsController::deleteNode(std::string name){

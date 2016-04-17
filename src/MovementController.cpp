@@ -144,14 +144,27 @@ void MovementController::moveAll(){
     	//std::cout << obAux->getType() <<std::endl;
         //if(obAux->getType() == "wolf"){
     	if(obAux->getType().find("wolf") != std::string::npos){
-        	//std::cout << "ES UN WOLF" <<std::endl;
-        	//*targetAux = _wolfGuideTarget; 
-        	*targetAux = _sceneMgr->getSceneNode("Redil")->getPosition(); 
-        	*originAux = obAux->getSceneNode()->getPosition();
-        	speed = getResultVector(originAux, targetAux, NPC_SPEED); 
-        	//speed = new Ogre::Vector3(1,0,0);
-        	//speed->normalise(); //???
-        	moveOne(obAux,speed);
+        	if(obAux->getHealth()>0){
+              //std::cout << "ES UN WOLF" <<std::endl;
+              //*targetAux = _wolfGuideTarget; 
+              *targetAux = _sceneMgr->getSceneNode("Redil")->getPosition(); 
+              *originAux = obAux->getSceneNode()->getPosition();
+              speed = getResultVector(originAux, targetAux, NPC_SPEED); 
+              //speed = new Ogre::Vector3(1,0,0);
+              //speed->normalise(); //???
+              Ogre::Vector3 *vect1 = new Ogre::Vector3(1,0,0);
+              moveOne(obAux,vect1);
+          }else{
+              //std::cout << "ES UN WOLF" <<std::endl;
+              //*targetAux = _wolfGuideTarget; 
+              *targetAux = _sceneMgr->getSceneNode("Redil")->getPosition(); 
+              *originAux = obAux->getSceneNode()->getPosition();
+              speed = getResultVector(originAux, targetAux, NPC_SPEED); 
+              Ogre::Vector3 *vect1 = new Ogre::Vector3(-1,0,0);
+              //speed = new Ogre::Vector3(1,0,0);
+              //speed->normalise(); //???
+              moveOne(obAux,vect1);
+          }
         }
         else if(obAux->getType().find("pig") != std::string::npos){
         //else if(obAux->getType() == "pig"){
@@ -172,13 +185,13 @@ void MovementController::moveAll(){
 }
 
 void MovementController::moveOne(OBEntity *obAux, Ogre::Vector3 *speed){
-	Ogre::Vector3 vect (0,0,1);
+	//Ogre::Vector3 vect (0,0,1);
 	//if(obAux->getRigidBody()->getLinearVelocity() != vect){
-	if(*speed != vect){
-		obAux->getRigidBody()->setLinearVelocity(*speed);
-	}
-	Ogre::Vector3 vect1 (1,0,1);
-	obAux->getRigidBody()->setLinearVelocity(vect1);
+	//if(*speed != vect){
+	//	obAux->getRigidBody()->setLinearVelocity(*speed);
+	//}
+	//Ogre::Vector3 vect1 (1,0,0);
+	obAux->getRigidBody()->setLinearVelocity(*speed);
 
 	/*else if(obAux->getRigidBody()->getLinearVelocity() != *speed){
 		obAux->getRigidBody()->setLinearVelocity(*speed);

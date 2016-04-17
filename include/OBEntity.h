@@ -44,6 +44,7 @@ class OBEntity
   OgreBulletDynamics::RigidBody* getRigidBody();
   int getPoints();
   int getIndex();
+  int getHealth();
   std::vector<Ogre::Vector3> *getPigPath();
 
   void setSceneNode(Ogre::SceneNode* sceneNode);

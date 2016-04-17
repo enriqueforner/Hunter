@@ -55,6 +55,10 @@ std::vector<Ogre::Vector3> * OBEntity::getPigPath(){
 	return _pigPath;
 }
 
+int OBEntity::getHealth(){
+	return _health;
+}
+
 void OBEntity::setSceneNode(Ogre::SceneNode* sceneNode){
 	_sNode = sceneNode;
 }
@@ -96,8 +100,9 @@ void OBEntity::setPigPath(){
 
 int OBEntity::decreaseHealth(){
 	int res = 0;
-	if((_type.compare("wolf") == 0)  && _health > 0){
-		_health = _health - 1;
+	if((_type.find("wolf") == 0)  && _health > 0){
+		std::cout << "Bajando" << std::endl;
+		_health--;
 		//A cada pedrada que le atines, que te de puntos
 		_points = _points + WOLF_POINTS;
 		res = res + WOLF_POINTS;

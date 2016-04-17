@@ -45,6 +45,7 @@ class PhysicsController{
 		void deleteNode(std::string name);
 		void deleteOBEntity(OBEntity *OBEntity);
 		void reasignIndexes();
+		OBEntity* getOBEntitieByName(std::string name);
 	private:
 		std::vector <OBEntity*> *_obEntities; //Enemigos, proyectiles, escenario...
 		Ogre::SceneManager *_sceneMgr;
