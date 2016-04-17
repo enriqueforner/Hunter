@@ -139,7 +139,7 @@ void MovementController::moveAll(){
 
     //con OBEntities
     for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
-    	*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+    	obAux = *it; //Igual aqui peta, por cacharreo intenso de punteros
     	//std::cout<< obAux->getType() << std::endl;
     	//std::cout << obAux->getType() <<std::endl;
         //if(obAux->getType() == "wolf"){
@@ -203,7 +203,7 @@ void MovementController::moveOne(OBEntity *obAux, Ogre::Vector3 *speed){
 OBEntity * MovementController::getOBEntityByType(std::string type){
 	OBEntity *obAux = new OBEntity("none");
 	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
-		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		obAux = *it; //Igual aqui peta, por cacharreo intenso de punteros
 		if(obAux->getType().compare(type)==0){
 			return obAux;
 		}

@@ -37,8 +37,8 @@ PlayState::enter ()
   _sceneMgr = _root->getSceneManager("SceneManager");
   _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
   _camera = _sceneMgr->getCamera("IntroCamera");
-  //_camera->setPosition(Ogre::Vector3(55,17,0));
-  _camera->setPosition(Ogre::Vector3(-45,17,0));
+  _camera->setPosition(Ogre::Vector3(55,17,0));
+  //_camera->setPosition(Ogre::Vector3(-45,17,0));
   _camera->lookAt(Ogre::Vector3(0,0,0));
   _camera->setNearClipDistance(5);
   _camera->setFarClipDistance(10000);
@@ -70,7 +70,7 @@ PlayState::enter ()
   _world = new OgreBulletDynamics::DynamicsWorld(_sceneMgr,
      worldBounds, gravity);
   _world->setDebugDrawer (_debugDrawer);
-  _world->setShowDebugShapes (true);  // Muestra los collision shapes
+  _world->setShowDebugShapes (false);  // Muestra los collision shapes
 
   //CAMARA 2
   _aerialCamera = _sceneMgr->createCamera("AerialCamera");
@@ -225,7 +225,7 @@ PlayState::keyPressed
     OBEntity *obAux = new OBEntity("none");
     std::cout << "OBEntities" << std::endl;
     for(std::vector<OBEntity *>::iterator it = _obEntities.begin(); it != _obEntities.end(); ++it) {
-      *obAux = **it;
+      obAux = *it;
       std::cout << obAux->getType() <<std::endl;
     }
   } 

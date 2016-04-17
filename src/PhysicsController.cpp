@@ -315,7 +315,7 @@ void PhysicsController::detectCollision(){
 OBEntity* PhysicsController::getOBEntitieByName(std::string name){
 	OBEntity *obAux = new OBEntity("name");
 	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
-		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		obAux = *it; //Igual aqui peta, por cacharreo intenso de punteros
 		if (obAux->getType().compare(name)==0){
 			return obAux;
 		}
@@ -360,21 +360,21 @@ void PhysicsController::reasignIndexes(){
 	int index = 0;
 	OBEntity *obAux = new OBEntity("none");
 	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
-		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		obAux = *it; //Igual aqui peta, por cacharreo intenso de punteros
 		std::cout << obAux->getType() << " " << obAux->getIndex()<<std::endl;
 	}
 
 	index = 0;
 	obAux = new OBEntity("none");
 	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
-		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		obAux = *it; //Igual aqui peta, por cacharreo intenso de punteros
 		obAux->setIndex(index);
 		index ++;
 	}
 	std::cout <<"indexes reasigned" << std::endl;
 
 	for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
-		*obAux = **it; //Igual aqui peta, por cacharreo intenso de punteros
+		obAux = *it; //Igual aqui peta, por cacharreo intenso de punteros
 		std::cout << obAux->getType() << " " << obAux->getIndex()<<std::endl;
 	}
 }
