@@ -16,7 +16,7 @@
 #include <sstream>
 
 #define THROW_FORCE 50.0
-#define MAX_FORCE 200.0
+#define MAX_FORCE 75.0
 #define T_SPEED 20.0
 #define CAM_ROTATION_SPEED 20.0
 #define SHOOT_COOLDOWN 1
@@ -70,11 +70,11 @@ PlayState::enter ()
   _world = new OgreBulletDynamics::DynamicsWorld(_sceneMgr,
      worldBounds, gravity);
   _world->setDebugDrawer (_debugDrawer);
-  _world->setShowDebugShapes (false);  // Muestra los collision shapes
+  _world->setShowDebugShapes (true);  // Muestra los collision shapes
 
   //CAMARA 2
   _aerialCamera = _sceneMgr->createCamera("AerialCamera");
-  _aerialCamera->setPosition(Ogre::Vector3(0, 70, -50));
+  _aerialCamera->setPosition(Ogre::Vector3(30, 50, 0));
   _aerialCamera->lookAt(Ogre::Vector3(0, -1, 0));
   _aerialCamera->setNearClipDistance(5);
   
@@ -106,7 +106,7 @@ PlayState::enter ()
   _movementController = new MovementController(_sceneMgr,&_bodies,&_shapes,&_obEntities);
   _physicsController = new PhysicsController(_sceneMgr, _world,_movementController, &_obEntities);
 
-
+  _forcePercent = 0;
   _exitGame = false;
 }
 
@@ -173,6 +173,10 @@ PlayState::frameStarted
   
   if(_trackedBody){
     _projectileCamera->setPosition(_trackedBody->getCenterOfMassPosition());
+    Ogre::Vector3 trackedBodyPosition = _trackedBody->getCenterOfMassPosition();
+    Ogre::Vector3 projectileLookAt(trackedBodyPosition.x - _camera->getPosition().x, trackedBodyPosition.y - _camera->getPosition().y, trackedBodyPosition.z - _camera->getPosition().z);
+    //_projectileCamera->lookAt(_camera->getDerivedDirection());
+    _projectileCamera->lookAt(trackedBodyPosition + projectileLookAt);
   }
 
   if(_shootKeyDown){
@@ -318,6 +322,20 @@ PlayState::mousePressed
    if(e.state.buttonDown(OIS::MB_Left)){
       //std::cout << "BOTON IZQUIERDO PULSADO\n";
       _shootKeyDown = true;
+      if(THROW_FORCE*_keyDownTime > MAX_FORCE){
+        _forcePercent = 100;
+        std::stringstream text;
+        text << _forcePercent << "%";
+        _sPF->getSheet()->getChild("PowerWindow")->setText(text.str());
+      }
+      else{
+        _forcePercent = (THROW_FORCE*_keyDownTime / MAX_FORCE) * 100;
+        std::stringstream text;
+        text << _forcePercent << "%";
+        _sPF->getSheet()->getChild("PowerWindow")->setText(text.str());
+        
+      }
+
       //std::cout << "VA?" << std::endl;
       // F = 10;
 
@@ -360,7 +378,7 @@ void
 PlayState::mouseReleased
 (const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
-  CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertMouseButton(id));
+ CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertMouseButton(id));
   double tForce = 0.0;
   //std::cout << "BOTON IZQUIERDO SOLTADO\n";   
   if(_timeLastObject <= 0){
@@ -368,8 +386,11 @@ PlayState::mouseReleased
     if(tForce > MAX_FORCE){
       tForce = MAX_FORCE;
     }
+    _forcePercent = (tForce / MAX_FORCE) * 100;
     //std::cout << _keyDownTime << std::endl;
+    std::cout << "FUERZA "<<_forcePercent<< "%" <<std::endl;
     AddAndThrowDynamicObject("rock", tForce); //poner aqui el tipo de cosa que tirar
+    _forcePercent = 0;
   }
   _shootKeyDown = false;
   _keyDownTime = 0.0;
@@ -497,7 +518,7 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   /*entity = _sceneMgr->createEntity("OBEntity" + 
   //StringConverter::toString(_numEntities), "sheep.mesh");
   StringConverter::toString(_numEntities), "CerdoIni.mesh");*/
-  entity = _sceneMgr->createEntity(uniqueName.str(), "CerdoIni.mesh");
+  entity = _sceneMgr->createEntity(uniqueName.str(), "PiedraLanzar.mesh");
 
   SceneNode *node = _sceneMgr->getRootSceneNode()->
     createChildSceneNode(entity->getName());
@@ -539,8 +560,8 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   // Anadimos los objetos a las deques
   _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
   
-  //_trackedBody = rigidBody;
-  //_obEntities.push_back(obentity);
+  _trackedBody = rigidBody;
+  _obEntities.push_back(obentity);
   //obentity->setIndex(_obEntities.size()-1);
 }
 

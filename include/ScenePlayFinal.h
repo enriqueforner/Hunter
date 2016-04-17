@@ -13,6 +13,7 @@ public:
 	~ScenePlayFinal();
 	void crearCeguiFinal();
 	void PointsAndPower();
+	CEGUI::Window* getSheet();
 private:
 
 	Ogre::SceneManager* _sceneManager;

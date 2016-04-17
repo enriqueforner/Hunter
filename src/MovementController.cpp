@@ -19,7 +19,7 @@
 MovementController::MovementController(Ogre::SceneManager* sceneMgr){
 	_sceneMgr = sceneMgr;
 	//Crear los 2 nodos guia
-	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Lobo.mesh");
+	/*Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Lobo.mesh");
   	_wolfGuide = _sceneMgr->createSceneNode("wolfGuide");
   	_wolfGuide->attachObject(wolfGuideEntity);
 
@@ -42,6 +42,7 @@ MovementController::MovementController(Ogre::SceneManager* sceneMgr){
   	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
   	_pigGuidePath = new std::vector <Ogre::Vector3>;
   	_pigGuidePath->push_back(_wolfGuideTarget); //Esto es de prueba, borrar luego
+  	*/
 }
 	
 MovementController::MovementController(Ogre::SceneManager* sceneMgr, std::deque <OgreBulletDynamics::RigidBody *> *bodies, std::deque <OgreBulletCollisions::CollisionShape *> *shapes, std::vector <OBEntity *>  *obEntities){
@@ -50,7 +51,7 @@ MovementController::MovementController(Ogre::SceneManager* sceneMgr, std::deque 
 	_shapes = shapes;
 	_obEntities = obEntities;
 	//Crear los 2 nodos guia
-	
+	/*
 	Entity *wolfGuideEntity = _sceneMgr->createEntity("wolfGuideEntity","Lobo.mesh");
   	_wolfGuide = _sceneMgr->createSceneNode("wolfGuide");
   	_wolfGuide->attachObject(wolfGuideEntity);
@@ -74,6 +75,7 @@ MovementController::MovementController(Ogre::SceneManager* sceneMgr, std::deque 
   	//Inicializar la ruta del guia cerdo aqui. Ruta que acabe en el mismo punto que empieza
   	_pigGuidePath = new std::vector <Ogre::Vector3>;
   	_pigGuidePath->push_back(_wolfGuideTarget); //Esto es de prueba, borrar luego
+  	*/
 }
 
 //MovementController::~MovementController(){}
@@ -133,9 +135,9 @@ void MovementController::moveAll(){
     Ogre::Vector3 *targetAux = new Ogre::Vector3(0,0,0); 
     Ogre::Vector3 *originAux = new Ogre::Vector3(0,0,0);      
 
-    if(_pigGuidePath->size() < 1){
+    /*if(_pigGuidePath->size() < 1){
     	//Volver a meterle la ruta
-    }
+    }*/
 
     //con OBEntities
     for(std::vector<OBEntity *>::iterator it = _obEntities->begin(); it != _obEntities->end(); ++it) {
