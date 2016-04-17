@@ -816,6 +816,8 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
     //int newwolf = ;
     int posH = 4;
     //int posx[3] = {7,14,21};
+    int H = -20;
+    int V = 0;
     for (int i = 0; i < 19; ++i){  
       //TEDynamicObject taO;
       Entity *entity = NULL;
@@ -852,7 +854,7 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
 
       rigidBody->setShape(node, bodyShape,
          0.6 /* Restitucion */, 0.6 /* Friccion */,
-         5.0 /* Masa */, Ogre::Vector3(-70, 0, -40 + posH),  // 0,0,35
+         5.0 /* Masa */, Ogre::Vector3(-70 + V, 0, H + posH),  // 0,0,35
          node->_getDerivedOrientation()/* Orientacion */);
       //rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
         rigidBody->setLinearVelocity(Ogre::Vector3::ZERO);
@@ -864,6 +866,11 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
       obentity->setIndex(_obEntities.size()-1);
       _numEntities ++;
       posH = posH + 4;
+      if(i ==9){
+          H = -20;
+          posH = 6;
+          V = -5;
+      }
       //newwolf++;
 
     }  
