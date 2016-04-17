@@ -37,7 +37,8 @@ PlayState::enter ()
   _sceneMgr = _root->getSceneManager("SceneManager");
   _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
   _camera = _sceneMgr->getCamera("IntroCamera");
-  _camera->setPosition(Ogre::Vector3(55,17,0));
+  //_camera->setPosition(Ogre::Vector3(55,17,0));
+  _camera->setPosition(Ogre::Vector3(-45,17,0));
   _camera->lookAt(Ogre::Vector3(0,0,0));
   _camera->setNearClipDistance(5);
   _camera->setFarClipDistance(10000);
@@ -90,7 +91,9 @@ PlayState::enter ()
   // Creacion de los elementos iniciales del mundo
   
   CreateInitialWorld();
-
+  _sceneMgr->setSkyBox(true, "MySky");
+  _sPF = new ScenePlayFinal(_sceneMgr);
+  _sPF -> PointsAndPower();
   _keyDownTime = 0.0;
   _shootKeyDown = false;
   _mouseRotation = Vector2::ZERO;
@@ -449,6 +452,7 @@ void PlayState::CreateInitialWorld() {
 
   ColocarWolfAndRedilAndPig();
   CrearBosqueAndColina();
+  CreationWolf();
   std::cout << "BOSQUE AND COLINA COLOCADAS" <<std::endl;
   //TEDynamicObjectMovement();
   //std::cout << "FIN DE TEDYNAMIC" <<std::endl;
@@ -701,7 +705,7 @@ void PlayState::ColocarWolfAndRedilAndPig() {
     OgreBulletDynamics::RigidBody("Redil", _world);
   rigidObjectR->setShape(nodeRedil, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(30,0,0), 
        Quaternion::IDENTITY);        
-
+  /*
   int posx[5] = {20,30,40,50,60};
   for (int i = 0; i < 5; ++i){
       std::ostringstream os;
@@ -723,7 +727,7 @@ void PlayState::ColocarWolfAndRedilAndPig() {
       rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(-posx[i], 0, 0), 
         Quaternion::IDENTITY);        
       
-  }
+  }*/
 }
 
 void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string type como parametro
@@ -786,20 +790,31 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
           (*it) -> setLinearVelocity(Ogre::Vector3(0,0,1));  
     }
  }
- 
- void PlayState::CreateBackGround(){
-    MaterialPtr mat = MaterialManager::getSingleton().getByName("AzulCielo");
-    Rectangle2D* rect = new Rectangle2D(true);
-    rect->setCorners(-1.0, 1.0, 1.0, -1.0);
-    rect->setMaterial("AzulCielo");
-    rect->setRenderQueueGroup(RENDER_QUEUE_BACKGROUND);
-    // Set the bounding box to something big
-    rect->setBoundingBox(AxisAlignedBox(-100000.0*Vector3::UNIT_SCALE, 100000.0*Vector3::UNIT_SCALE));
 
-    // Attach background to the scene
-    SceneNode* node = _sceneMgr->getRootSceneNode()->createChildSceneNode("AzulCielo");
-    node->attachObject(rect);
-}
+ void PlayState::CreationWolf(){
+    int newwolf = 6;
+    for (int i = 0; i < 1; ++i){
+      std::ostringstream os;
+      os << "wolf" << newwolf;
+
+      Entity *entityWolf = _sceneMgr->createEntity(os.str(),"Lobo.mesh");
+      SceneNode *nodeWolf = _sceneMgr->createSceneNode(os.str());
+      nodeWolf->attachObject(entityWolf);
+      nodeWolf-> setPosition(80,0,0);
+      //nodeWolf ->
+      _sceneMgr->getRootSceneNode()->addChild(nodeWolf);
+      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterW = new 
+          OgreBulletCollisions::StaticMeshToShapeConverter(entityWolf);
+
+      OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshW = 
+          trimeshConverterW->createTrimesh();
+      OgreBulletDynamics::RigidBody *rigidObjectW = new 
+        OgreBulletDynamics::RigidBody(os.str(), _world);
+      rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(80, 0, 0), 
+        Quaternion::IDENTITY);        
+      
+    }
+ }
 
 
 //CODIGO DEL CHOQUE CON LOBOS

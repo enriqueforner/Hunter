@@ -46,6 +46,8 @@
 #include <string>
 
 #include "FinalState.h" 
+ 
+#include "ScenePlayFinal.h"
 
 using namespace Ogre;
 using namespace OgreBulletCollisions;
@@ -86,9 +88,9 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   void DetectCollisionPig();
   void TEDynamicObjectMovement();
   void RecorreVectorTAOAnadirMovimientoConstante();
-  void CreateBackGround();
+  void CreationWolf();
   void CrearBosqueAndColina();
-  
+
  protected:
   Ogre::Root* _root;
   Ogre::SceneManager* _sceneMgr;
@@ -125,6 +127,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   std::vector <OgreBulletDynamics::RigidBody*>         _bodiesC;
   std::vector <OgreBulletCollisions::CollisionShape*>  _shapesC;
 
+  ScenePlayFinal* _sPF;
 
 };
 

@@ -20,3 +20,11 @@ void ScenePlayFinal::crearCeguiFinal(){
                 FinalState::getSingletonPtr())); 
 
 }
+
+void ScenePlayFinal::PointsAndPower(){
+
+	CEGUI::Window* vent = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("PointsHunter.layout");
+	vent->setPosition(CEGUI::UVector2(CEGUI::UDim(0.65f,0),CEGUI::UDim(0.00f,0)));
+	_sheet -> addChild(vent);
+
+}

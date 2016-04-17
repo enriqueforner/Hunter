@@ -51,7 +51,7 @@ class PhysicsController{
 		OgreBulletDynamics::DynamicsWorld *_world;
 		MovementController *_movementController;
 		//std::vector <OBEntity*> *_obEntities;
-
+		std::vector<String> *_rocks;
 
 };
 

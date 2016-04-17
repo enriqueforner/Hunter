@@ -27,7 +27,7 @@ IntroState::enter ()
   _camera->setFarClipDistance(10000);  
 
   _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
-  _viewport->setBackgroundColour(Ogre::ColourValue(1.0, 1.0, 1.0));
+  //_viewport->setBackgroundColour(Ogre::ColourValue(1.0, 1.0, 1.0));
   
   _iS = new IntroScene(_sceneMgr);
   _iS-> crearMenuInicioCEGUI();
@@ -35,7 +35,7 @@ IntroState::enter ()
   _iS -> ActRanking();
   _lanzaranimacion = true;
   _animState = NULL;
- 
+  _sceneMgr->setSkyBox(true, "MySky");
   _exitGame = false;
 }
 
@@ -63,7 +63,7 @@ IntroState::frameStarted
 {
   Ogre::Real deltaT = evt.timeSinceLastFrame;
   if (_lanzaranimacion){
-    _animState = _sceneMgr->getEntity("CerdoIni")->getAnimationState("CerdoIniSaltar");
+    _animState = _sceneMgr->getEntity("CerdoIni")->getAnimationState("Salto");
     _animState->setEnabled(true);
     _animState->setLoop(true);
     _animState->setTimePosition(0.0);
@@ -208,7 +208,7 @@ void IntroState::loadCEGUI(){
   
   CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultFont("DejaVuSans-12");
   CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("OgreTrayImages/MouseArrow");
-  
+  CEGUI::FontManager::getSingleton().createAll("*.font", "Fonts");
   _sheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow","Ex1/Sheet");
   CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(_sheet);
   

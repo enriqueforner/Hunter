@@ -12,6 +12,7 @@ public:
 	ScenePlayFinal(Ogre::SceneManager *sceneManager);
 	~ScenePlayFinal();
 	void crearCeguiFinal();
+	void PointsAndPower();
 private:
 
 	Ogre::SceneManager* _sceneManager;

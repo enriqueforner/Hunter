@@ -32,7 +32,7 @@ PhysicsController::PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDyn
 	_firstCol = true;
 	_latestNodeCol1 = "none";
 	_latestNodeCol2 = "none";
-
+	_rocks = new std::vector<String>;
 }
 
 //~PhysicsController(){}
@@ -254,18 +254,33 @@ void PhysicsController::detectCollision(){
     if(nodeA && nodeB){
     	if((nodeA->getName().find("wolf") == 0)||(nodeB->getName().find("wolf") == 0)){
     		Ogre::SceneNode* node = NULL;
+    		bool goodCollision = true;
     		if(nodeA->getName().find("rock") == 0){
     			node = obOB_A->getRootNode();
-    			delete obOB_A;
+    			for(std::vector<String>::iterator it = _rocks->begin(); it != _rocks->end(); ++it) {
+    				//node = obOB_A->getRootNode();
+    				//delete obOB_A;
+    				if (node->getName().find(*it) == 0){
+    					goodCollision = false;
+    				}
+    			}
     		}
     		else if(nodeB->getName().find("rock") == 0){
     			node = obOB_B->getRootNode();
-    			delete obOB_B;
+    			//delete obOB_B;
+    			for(std::vector<String>::iterator it = _rocks->begin(); it != _rocks->end(); ++it) {
+    				//node = obOB_A->getRootNode();
+    				//delete obOB_A;
+    				if (node->getName().find(*it) == 0){
+    					goodCollision = false;
+    				}
+    			}
     		}
-    		if(node){
+    		if(goodCollision){
     			std::cout << "DETECTED COLLISION: " << node->getName() << std::endl; 
         		std::cout << node->getName() << std::endl;
-        		_sceneMgr->getRootSceneNode()->removeAndDestroyChild (node->getName());
+        		_rocks->push_back(node->getName());
+        		//_sceneMgr->getRootSceneNode()->removeAndDestroyChild (node->getName());
     		}
     	}
     }
