@@ -14,11 +14,15 @@ public:
 	void crearCeguiFinal();
 	void PointsAndPower();
 	CEGUI::Window* getSheet();
+	CEGUI::Window* getPointsWindow();
+	CEGUI::Window* getPowerWindow();
+	void updatePower(int power);
+	void updatePoints(int points);
 private:
 
 	Ogre::SceneManager* _sceneManager;
 	CEGUI::Window* _sheet;
-	
-	
+	CEGUI::Window* _pointsWindow;
+	CEGUI::Window* _powerWindow;
 };
 #endif

@@ -107,6 +107,7 @@ PlayState::enter ()
   _physicsController = new PhysicsController(_sceneMgr, _world,_movementController, &_obEntities);
 
   _forcePercent = 0;
+  _points = 0;
   _exitGame = false;
 }
 
@@ -182,6 +183,20 @@ PlayState::frameStarted
   if(_shootKeyDown){
     _keyDownTime = _keyDownTime + _deltaT;
   }
+ 
+  if(_keyDownTime * THROW_FORCE > 100){
+    _forcePercent = 100;
+  }  
+  else{
+    _forcePercent = _keyDownTime * THROW_FORCE;
+  }
+
+  //_points++;
+  _sPF->updatePower(_forcePercent);
+  _sPF->updatePower(_points);
+  //std::cout<<_sPF->getSheet()->getChild("PowerWindow")->getUpdateMode() <<std::endl;
+  //_sPF->getSheet()->getChild("PowerWindow")->update(_deltaT);
+  //CEGUI::System::getSingleton().injectTimePulse(_deltaT);
   //DetectCollisionPig();
   _physicsController->detectCollision();  //Este es el bueno. Hay que cambiarlo para que compruebe colisiones sobre todo
   _movementController->moveAll();
@@ -190,6 +205,7 @@ PlayState::frameStarted
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
   return true;
+  
 }
 
 bool
@@ -321,20 +337,21 @@ PlayState::mousePressed
 
    if(e.state.buttonDown(OIS::MB_Left)){
       //std::cout << "BOTON IZQUIERDO PULSADO\n";
+      //CEGUI::Window *window = _sPF->getSheet()->getChild("PowerWindow");
       _shootKeyDown = true;
-      if(THROW_FORCE*_keyDownTime > MAX_FORCE){
-        _forcePercent = 100;
-        std::stringstream text;
-        text << _forcePercent << "%";
-        _sPF->getSheet()->getChild("PowerWindow")->setText(text.str());
-      }
-      else{
-        _forcePercent = (THROW_FORCE*_keyDownTime / MAX_FORCE) * 100;
-        std::stringstream text;
-        text << _forcePercent << "%";
-        _sPF->getSheet()->getChild("PowerWindow")->setText(text.str());
+      //if(THROW_FORCE*_keyDownTime > MAX_FORCE){
+      //_forcePercent = 100;
+        /*std::stringstream text;
+        text << _forcePercent;
+        window->setText(text.str());*/
+      //}
+      //else{
+      // _forcePercent = (THROW_FORCE*_keyDownTime / MAX_FORCE) * 100;
+        /*std::stringstream text;
+        text << _forcePercent;
+        window->setText(text.str());*/
         
-      }
+      //}
 
       //std::cout << "VA?" << std::endl;
       // F = 10;
@@ -387,8 +404,13 @@ PlayState::mouseReleased
       tForce = MAX_FORCE;
     }
     _forcePercent = (tForce / MAX_FORCE) * 100;
+    /*CEGUI::Window *window = _sPF->getSheet()->getChild("PowerWindow");
+    std::stringstream text;
+    text << _forcePercent;
+    window->setText(text.str());
     //std::cout << _keyDownTime << std::endl;
-    std::cout << "FUERZA "<<_forcePercent<< "%" <<std::endl;
+    std::cout << "FUERZA "<< text.str() <<std::endl;*/
+    _sPF->updatePower(_forcePercent);
     AddAndThrowDynamicObject("rock", tForce); //poner aqui el tipo de cosa que tirar
     _forcePercent = 0;
   }

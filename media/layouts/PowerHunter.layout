@@ -8,7 +8,7 @@
         <Window type="OgreTray/StaticText" name="StaticText" >
             <Property name="Area" value="{{-0.00898588,194},{-0.592758,105},{-0.00898588,331},{-0.60618,173}}" />
             <Property name="Font" value="Jura-18" />
-            <Property name="Text" value="0 %" />
+            <Property name="Text" value="0" />
             <Property name="MaxSize" value="{{1,0},{1,0}}" />
             <Property name="HorzScrollPageSize" value="111" />
             <Property name="VertScrollPageSize" value="40" />

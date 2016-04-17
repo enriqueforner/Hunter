@@ -130,6 +130,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   ScenePlayFinal* _sPF;
 
   int _forcePercent;
+  int _points;
 
 };
 
