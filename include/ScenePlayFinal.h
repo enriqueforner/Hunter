@@ -18,6 +18,7 @@ public:
 	CEGUI::Window* getPowerWindow();
 	void updatePower(int power);
 	void updatePoints(int points);
+	void cleanCegui();
 private:
 
 	Ogre::SceneManager* _sceneManager;

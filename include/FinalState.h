@@ -36,7 +36,10 @@ class FinalState : public Ogre::Singleton<FinalState>, public GameState
   void DestroyAllAttachedMovableObjects(Ogre::SceneNode* i_pSceneNode);
   bool actualizarranking();
   bool exitButtonC(const CEGUI::EventArgs& e);
+  bool mainmenuButtonC(const CEGUI::EventArgs& e);
+
   void LimpiarTodo();
+
  protected:
  
   Ogre::Root* _root;

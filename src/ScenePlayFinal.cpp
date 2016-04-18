@@ -24,6 +24,11 @@ void ScenePlayFinal::crearCeguiFinal(){
           CEGUI::Event::Subscriber(&FinalState::exitButtonC, 
                 FinalState::getSingletonPtr())); 
 
+    CEGUI::Window* mmbutton = vent->getChild("MainMenuButton");
+      mmbutton->subscribeEvent(CEGUI::PushButton::EventClicked,
+          CEGUI::Event::Subscriber(&FinalState::mainmenuButtonC, 
+                FinalState::getSingletonPtr())); 
+
     //CEGUI::Window* puntosplayer = _sheet->getChild("Puntuacion");
     vent->getChild("PuntosPlayer")->setText(_sheet->getChild("PointsWindow")->getChild("StaticText")->getText());
 }
@@ -109,4 +114,11 @@ void ScenePlayFinal::updatePoints(int points){
     _pointsWindow->getChild("StaticText")->setText(os.str());
 
     //std::cout << "TEXTO POINTS STATIC "<<_powerWindow->getChild("StaticText")->getText() << std::endl;
+}
+
+void ScenePlayFinal::cleanCegui(){
+    _sheet-> destroyChild("PowerWindow");
+    _sheet-> destroyChild("PointsWindow");
+    _sheet-> destroyChild("Puntuacion");
+
 }

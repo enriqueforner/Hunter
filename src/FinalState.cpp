@@ -28,7 +28,7 @@ FinalState::enter ()
 void
 FinalState::exit ()
 {
-  _sceneMgr->destroyCamera("IntroCamera");
+  //_sceneMgr->destroyCamera("IntroCamera");
   CEGUI::Window* sheet = CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
   Ogre::Node *node;
   Ogre::Entity *entity;
@@ -41,6 +41,7 @@ FinalState::exit ()
   }
   static_cast<Ogre::SceneNode*>(_sceneMgr->getRootSceneNode())->removeAndDestroyAllChildren();
   //actualizarranking();
+  _sPF -> cleanCegui();
   LimpiarTodo();
   _root->getAutoCreatedWindow()->removeAllViewports();
 
@@ -48,15 +49,15 @@ FinalState::exit ()
 
 void FinalState::DestroyAllAttachedMovableObjects(Ogre::SceneNode* i_pSceneNode )
 {
-      
        Ogre::SceneNode::ObjectIterator itObject = i_pSceneNode->getAttachedObjectIterator();
 
        while ( itObject.hasMoreElements() )
        {
           Ogre::MovableObject* pObject = static_cast<Ogre::MovableObject*>(itObject.getNext());
-          i_pSceneNode->getCreator()->destroyMovableObject( pObject );
+          //i_pSceneNode->getCreator()->destroyMovableObject( pObject );
+          delete pObject;
        }
-
+/*
        Ogre::SceneNode::ChildNodeIterator itChild = i_pSceneNode->getChildIterator();
 
        while ( itChild.hasMoreElements() )
@@ -64,6 +65,7 @@ void FinalState::DestroyAllAttachedMovableObjects(Ogre::SceneNode* i_pSceneNode 
           Ogre::SceneNode* pChildNode = static_cast<Ogre::SceneNode*>(itChild.getNext());
           DestroyAllAttachedMovableObjects( pChildNode );
        }
+*/
 }
 
 void
@@ -189,5 +191,9 @@ void FinalState::LimpiarTodo(){
   renderer-> destroyTexture("INameHunter");
 
 
+}
 
+bool FinalState::mainmenuButtonC(const CEGUI::EventArgs& e){
+    changeState(IntroState::getSingletonPtr());
+    return true; 
 }

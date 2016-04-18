@@ -77,6 +77,7 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
   IntroScene* _iS;
   CEGUI::OgreRenderer* renderer;
   CEGUI::Window* _sheet;
+  int _loadcegui;
 };
 
 #endif

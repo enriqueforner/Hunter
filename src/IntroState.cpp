@@ -9,8 +9,8 @@ IntroState::IntroState(){
     _sceneMgr = _root->createSceneManager(Ogre::ST_GENERIC, "SceneManager");
     _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
     _camera = _sceneMgr->createCamera("IntroCamera");
-    
-    loadCEGUI();
+    _loadcegui = 1;
+    //loadCEGUI();
     
 }
 
@@ -19,7 +19,7 @@ IntroState::enter ()
 {
 
   _sceneMgr -> setAmbientLight(Ogre::ColourValue(1,1,1));
-  
+  //_camera = _sceneMgr->createCamera("IntroCamera");
   _camera = _sceneMgr->getCamera("IntroCamera");
   _camera->setPosition(Ogre::Vector3(5,20,56));
   _camera->lookAt(Ogre::Vector3(0,0,0));
@@ -29,14 +29,23 @@ IntroState::enter ()
   _viewport = _root->getAutoCreatedWindow()->addViewport(_camera);
   //_viewport->setBackgroundColour(Ogre::ColourValue(1.0, 1.0, 1.0));
   
+  if (_loadcegui == 1)
+  {
+    loadCEGUI();
+    _loadcegui ++;
+  }
+
   _iS = new IntroScene(_sceneMgr);
   _iS-> crearMenuInicioCEGUI();
   _iS-> crearWorld();
   _iS -> ActRanking();
   _lanzaranimacion = true;
   _animState = NULL;
+   
   _sceneMgr->setSkyBox(true, "MySky");
+   
   _exitGame = false;
+  
 }
 
 void
