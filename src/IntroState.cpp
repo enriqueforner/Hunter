@@ -217,7 +217,7 @@ void IntroState::loadCEGUI(){
   
   CEGUI::System::getSingleton().getDefaultGUIContext().setDefaultFont("DejaVuSans-12");
   CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().setDefaultImage("OgreTrayImages/MouseArrow");
-  CEGUI::FontManager::getSingleton().createAll("*.font", "Fonts");
+  //CEGUI::FontManager::getSingleton().createAll("*.font", "Fonts");
   _sheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow","Ex1/Sheet");
   CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(_sheet);
   

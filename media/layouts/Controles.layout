@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout version="4" >
+    <Window type="DefaultWindow" name="Controles" >
+        <Property name="Area" value="{{0,0},{0,0},{1,-728},{1,-542}}" />
+        <Property name="MaxSize" value="{{1,0},{1,0}}" />
+        <Window type="OgreTray/Button" name="Button" >
+            <Property name="Area" value="{{0,50},{0,39},{0,188},{0,89}}" />
+            <Property name="Text" value="Controls" />
+        </Window>
+    </Window>
+</GUILayout>

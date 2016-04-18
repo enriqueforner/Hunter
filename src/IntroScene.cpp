@@ -17,6 +17,7 @@ void IntroScene::crearMenuInicioCEGUI(){
 	CEGUI::Window* vent = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("hunterMP.layout");
   CEGUI::Window* ventCreditos = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("creditos.layout");
   CEGUI::Window* ventranking = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("rankingl.layout");
+  CEGUI::Window* ventcontrols = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("Controles.layout");
 
   ventCreditos -> setVisible(false);
   ventranking -> setVisible(false);
@@ -24,12 +25,15 @@ void IntroScene::crearMenuInicioCEGUI(){
   vent->setPosition(CEGUI::UVector2(CEGUI::UDim(0.22f,0),CEGUI::UDim(0.18f,0)));
 	ventCreditos->setPosition(CEGUI::UVector2(CEGUI::UDim(0.18f,0),CEGUI::UDim(0.18f,0)));
   ventranking->setPosition(CEGUI::UVector2(CEGUI::UDim(0.18f,0),CEGUI::UDim(0.01f,0)));
-  
+  ventcontrols -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.77f,0),CEGUI::UDim(0.77f,0)));
+
   _sheet -> addChild(vent);
   _sheet -> addChild(ventCreditos);
   _sheet -> addChild(ventranking);
+  _sheet -> addChild(ventcontrols);
 
 	vent-> moveToFront();
+  ventcontrols -> moveToFront();
 
 	//BOTONES MP
 	CEGUI::Window* exitButton = vent->getChild("ExitButton");
@@ -156,7 +160,7 @@ void IntroScene::destroyCegui(){
   _sheet-> destroyChild("RankingL");
   _sheet-> destroyChild("INameHunter");
   CEGUI::ImageManager::getSingleton().destroy("INameHunter");
-
+  _sheet-> destroyChild("Controles");
 }
 
 void IntroScene::limpiarpantallaCEGUI(){
