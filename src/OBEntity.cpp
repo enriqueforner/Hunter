@@ -10,7 +10,7 @@
 
 #define WOLF_MAXHEALTH 2
 #define WOLF_POINTS 100
-#define WOLF_FLEE 500
+#define WOLF_FLEE 250
 
 OBEntity::OBEntity(std::string type){
 	_type = type;

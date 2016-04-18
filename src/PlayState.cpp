@@ -103,11 +103,14 @@ PlayState::enter ()
   CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
 
   //Crear el movementcontroller y el physicscontroller
+  _points = 0;
+  int *pointsPtr;
+  pointsPtr = &_points;
+  std::cout << *pointsPtr << std::endl;
   _movementController = new MovementController(_sceneMgr,&_bodies,&_shapes,&_obEntities);
-  _physicsController = new PhysicsController(_sceneMgr, _world,_movementController, &_obEntities);
+  _physicsController = new PhysicsController(_sceneMgr, _world, &_obEntities, pointsPtr);
   _lanzaranimationPig = true;
   _forcePercent = 0;
-  _points = 0;
   _vector_anims_pig = new std::vector<Ogre::AnimationState*>;
   _exitGame = false;
 }
@@ -192,7 +195,7 @@ PlayState::frameStarted
     _forcePercent = _keyDownTime * THROW_FORCE;
   }
 
-  _points++;
+  //_points++;
   _sPF->updatePower(_forcePercent);
   _sPF->updatePoints(_points);
   //std::cout<<_sPF->getSheet()->getChild("PowerWindow")->getUpdateMode() <<std::endl;
