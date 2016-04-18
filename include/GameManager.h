@@ -28,6 +28,12 @@
 
 #include "InputManager.h"
 
+#include "InputManager.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include "TrackManager.h"
+#include "SoundFXManager.h"
+
 class GameState;
 
 class GameManager : public Ogre::FrameListener, public Ogre::Singleton<GameManager>, public OIS::KeyListener, public OIS::MouseListener
@@ -47,6 +53,14 @@ class GameManager : public Ogre::FrameListener, public Ogre::Singleton<GameManag
   // Heredados de Ogre::Singleton.
   static GameManager& getSingleton ();
   static GameManager* getSingletonPtr ();
+
+  TrackManager *_pTrackManager;
+  SoundFXManager *_pSoundFXManager;
+
+  TrackPtr _mainTrack;
+  SoundFXPtr _soundEffect;
+
+  bool _initSDL();
 
  protected:
   Ogre::Root* _root;

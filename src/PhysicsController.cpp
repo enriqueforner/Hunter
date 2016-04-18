@@ -99,7 +99,10 @@ void PhysicsController::detectCollision(){
     		}
     		else if(nodeB->getName().find("Redil") == 0){
     			node = obOB_B->getRootNode();
-    			_finalGame = false;
+    			GameManager::getSingletonPtr()->_mainTrack->pause();
+                GameManager::getSingletonPtr()->_soundEffect = GameManager::getSingletonPtr()->_pSoundFXManager->load("s_pig.wav");
+                GameManager::getSingletonPtr()->_soundEffect->play();
+                _finalGame = false;
     			goodCollision = false;
     		}
     		else if(nodeB->getName().find("wolf") == 0){

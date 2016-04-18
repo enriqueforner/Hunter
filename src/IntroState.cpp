@@ -43,6 +43,12 @@ IntroState::enter ()
   _animState = NULL;
    
   _sceneMgr->setSkyBox(true, "MySky");
+
+  //Musica
+
+  GameManager::getSingletonPtr()->_mainTrack = GameManager::getSingletonPtr()->_pTrackManager->load("s_song.mp3");
+  //GameManager::getSingletonPtr()->_soundEffect = GameManager::getSingletonPtr()->_pSoundFXManager->load("s_pig.wav");
+  GameManager::getSingletonPtr()->_mainTrack->play();
    
   _exitGame = false;
   

@@ -32,6 +32,10 @@ PlayState::~PlayState(){}
 void
 PlayState::enter ()
 {
+
+  GameManager::getSingletonPtr()->_soundEffect = GameManager::getSingletonPtr()->_pSoundFXManager->load("s_eat.wav");
+  GameManager::getSingletonPtr()->_soundEffect->play();
+
   std::cout << "IN ENTER" << std::endl;
   _root = Ogre::Root::getSingletonPtr();
   // Se recupera el gestor de escena y la cámara.
@@ -672,7 +676,7 @@ void PlayState::ColocarWolfAndRedilAndPig() {
       if(i ==9){
           H = -20;
           posH = 6;
-          V = -5;
+          V = -10;
       }
     }  
  }

@@ -7,6 +7,7 @@ template<> GameManager* Ogre::Singleton<GameManager>::msSingleton = 0;
 
 GameManager::GameManager ()
 {
+    _initSDL();
     _root = new Ogre::Root();
     loadResources();
 
@@ -40,6 +41,9 @@ void
 GameManager::start
 (GameState* state)
 {
+    //Musica
+    _pTrackManager = OGRE_NEW TrackManager;
+    _pSoundFXManager = OGRE_NEW SoundFXManager;
     /* Transición al estado inicial. */
     changeState(state);
     /* Bucle de rendering. */
@@ -196,4 +200,22 @@ GameManager::mouseReleased
 {
   _states.top()->mouseReleased(e, id);
   return true;
+}
+
+bool GameManager::_initSDL () {
+  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+    return false;
+  }
+  // Llamar a  SDL_Quit al terminar.
+  atexit(SDL_Quit);
+ 
+  // Inicializando SDL mixer...
+  if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT,MIX_DEFAULT_CHANNELS, 4096) < 0) {
+    return false;
+  }
+ 
+  // Llamar a Mix_CloseAudio al terminar.
+  atexit(Mix_CloseAudio);
+ 
+  return true;    
 }
