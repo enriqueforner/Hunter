@@ -916,10 +916,13 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
       os << "wolf" <<i;
       if (obAux->getType().compare(os.str())==0){
           if (obAux->getHealth()==0){
+              std::cout << "Lobos Muertos" <<deadWolf << std::endl;          
               deadWolf = deadWolf +1;
           }
       }
+      i++;
     }
+
     if(deadWolf == 19){
         isFinalGame();
     }

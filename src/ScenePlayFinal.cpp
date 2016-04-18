@@ -37,7 +37,7 @@ void ScenePlayFinal::PointsAndPower(){
 	//_pointsWindow->setClippedByParent(false);
 	_pointsWindow->activate();
 
-	std::cout << "POINTS RECIEN ACTIVA" <<_pointsWindow->isActive() << std::endl;
+	//std::cout << "POINTS RECIEN ACTIVA" <<_pointsWindow->isActive() << std::endl;
 
 	_powerWindow = CEGUI::WindowManager::getSingleton().loadLayoutFromFile("PowerHunter.layout");
 	_powerWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(0.50f,0),CEGUI::UDim(0.00f,0)));
@@ -47,14 +47,14 @@ void ScenePlayFinal::PointsAndPower(){
 	_powerWindow->setAlwaysOnTop(true);
 	//_powerWindow->setClippedByParent(false);
 	_powerWindow->activate();
-
+/*
 	std::cout << "SHEET ACTIVA" <<_sheet->isActive() << std::endl;
 	std::cout << "POINTS ACTIVA" <<_pointsWindow->isActive() << std::endl;
 	std::cout << "POWER ACTIVA" <<_powerWindow->isActive() << std::endl;
 
 	std::cout << "POINTS CLIPPED" <<_pointsWindow->isClippedByParent() << std::endl;
 	std::cout << "POWER CLIPPED" <<_powerWindow->isClippedByParent() << std::endl;
-
+*/
 }
 
 CEGUI::Window *ScenePlayFinal::getPointsWindow(){
@@ -76,7 +76,7 @@ void ScenePlayFinal::updatePower(int power){
     _powerWindow ->setText(os.str());
     _powerWindow ->enable();
     _powerWindow ->render();
-    std::cout << "TEXTO POWER "<<_powerWindow->getText() << std::endl;
+    //std::cout << "TEXTO POWER "<<_powerWindow->getText() << std::endl;
 
     _powerWindow->getChild("StaticText")->moveToFront();
     _powerWindow->getChild("StaticText")->activate();
@@ -84,7 +84,7 @@ void ScenePlayFinal::updatePower(int power){
     _powerWindow->getChild("StaticText")->render();
     _powerWindow->getChild("StaticText")->setText(os.str());
 
-    std::cout << "TEXTO POWER STATIC "<<_powerWindow->getChild("StaticText")->getText() << std::endl;
+    //std::cout << "TEXTO POWER STATIC "<<_powerWindow->getChild("StaticText")->getText() << std::endl;
 }
 
 void ScenePlayFinal::updatePoints(int points){
@@ -98,7 +98,7 @@ void ScenePlayFinal::updatePoints(int points){
     _pointsWindow -> setText(os.str());
     _pointsWindow ->enable();
     _pointsWindow -> render();
-    std::cout << "TEXTO POINTS "<<_pointsWindow->getText() << std::endl;
+    //std::cout << "TEXTO POINTS "<<_pointsWindow->getText() << std::endl;
 
     _pointsWindow->getChild("StaticText")->moveToFront();
     _pointsWindow->getChild("StaticText")->activate();
@@ -106,5 +106,5 @@ void ScenePlayFinal::updatePoints(int points){
     _pointsWindow->getChild("StaticText")->render();
     _pointsWindow->getChild("StaticText")->setText(os.str());
 
-    std::cout << "TEXTO POINTS STATIC "<<_powerWindow->getChild("StaticText")->getText() << std::endl;
+    //std::cout << "TEXTO POINTS STATIC "<<_powerWindow->getChild("StaticText")->getText() << std::endl;
 }
