@@ -191,9 +191,9 @@ PlayState::frameStarted
     _forcePercent = _keyDownTime * THROW_FORCE;
   }
 
-  //_points++;
+  _points++;
   _sPF->updatePower(_forcePercent);
-  _sPF->updatePower(_points);
+  _sPF->updatePoints(_points);
   //std::cout<<_sPF->getSheet()->getChild("PowerWindow")->getUpdateMode() <<std::endl;
   //_sPF->getSheet()->getChild("PowerWindow")->update(_deltaT);
   //CEGUI::System::getSingleton().injectTimePulse(_deltaT);
