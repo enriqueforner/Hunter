@@ -70,7 +70,7 @@ void ScenePlayFinal::updatePower(int power){
     // int points_actuales = atoi(points->getText().c_str());
     // points_actuales = newpuntos + points_actuales;
     std::ostringstream os;
-    os << power;
+    os << power <<"%";
     _powerWindow->activate();
     _powerWindow->getChild("StaticText")->moveToFront();
     _powerWindow ->setText(os.str());
