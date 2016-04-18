@@ -4,7 +4,7 @@
     <Window type="DefaultWindow" name="Controles" >
         <Property name="Area" value="{{0,0},{0,0},{1,-728},{1,-542}}" />
         <Property name="MaxSize" value="{{1,0},{1,0}}" />
-        <Window type="OgreTray/Button" name="Button" >
+        <Window type="OgreTray/Button" name="ButtonControl" >
             <Property name="Area" value="{{0,50},{0,39},{0,188},{0,89}}" />
             <Property name="Text" value="Controls" />
         </Window>

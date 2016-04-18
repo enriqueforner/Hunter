@@ -52,6 +52,11 @@ void IntroScene::crearMenuInicioCEGUI(){
     rankingButton ->subscribeEvent(CEGUI::PushButton::EventClicked,
           CEGUI::Event::Subscriber(&IntroState::rankingButtonC, 
                 IntroState::getSingletonPtr()));  
+  //Boton Controls
+  CEGUI::Window* controlsButton = ventcontrols->getChild("ButtonControl");
+    controlsButton ->subscribeEvent(CEGUI::PushButton::EventClicked,
+          CEGUI::Event::Subscriber(&IntroState::controlsButtonC, 
+                IntroState::getSingletonPtr()));    
 
   //BOTONES CREDITS  
   CEGUI::Window* atrasCButton = ventCreditos->getChild("AtrasCredits");
@@ -71,7 +76,7 @@ void IntroScene::crearMenuInicioCEGUI(){
   imgnameranking -> setProperty("FrameEnabled","False");
   imgnameranking -> setSize(CEGUI::USize(CEGUI::UDim(0.10f,0),CEGUI::UDim(0.14f,0)));  
   imgnameranking -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.21f,0),CEGUI::UDim(0.12f,0)));
-   ventranking -> addChild(imgnameranking);  
+  ventranking -> addChild(imgnameranking);  
 
   CEGUI::Window* imgnamepoints = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","IpointsRanking");
   CEGUI::ImageManager::getSingleton().addFromImageFile("IpointsRanking","PointsMPH.png");
@@ -90,6 +95,16 @@ void IntroScene::crearMenuInicioCEGUI(){
   imgnamehunter -> setSize(CEGUI::USize(CEGUI::UDim(0.23f,0),CEGUI::UDim(0.34f,0)));  
   imgnamehunter -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.12f,0),CEGUI::UDim(0.76f,0)));
   _sheet -> addChild(imgnamehunter);     
+
+  CEGUI::Window* imgnamecontrols = CEGUI::WindowManager::getSingleton().createWindow("TaharezLook/StaticImage","InameControls");
+  CEGUI::ImageManager::getSingleton().addFromImageFile("InameControls","controls.png");
+  imgnamecontrols -> setProperty("Image","InameControls");
+  imgnamecontrols -> setProperty("BackgroundEnabled","False");
+  imgnamecontrols -> setProperty("FrameEnabled","False");
+  imgnamecontrols -> setSize(CEGUI::USize(CEGUI::UDim(0.35f,0),CEGUI::UDim(0.35f,0)));  
+  imgnamecontrols -> setPosition(CEGUI::UVector2(CEGUI::UDim(0.64f,0),CEGUI::UDim(0.45f,0)));
+  imgnamecontrols -> setVisible(false);
+  _sheet -> addChild(imgnamecontrols);  
 
 }
 
@@ -157,6 +172,10 @@ void IntroScene::destroyCegui(){
   CEGUI::ImageManager::getSingleton().destroy("InameRanking");
   _sheet-> getChild("RankingL")->destroyChild("IpointsRanking");
   CEGUI::ImageManager::getSingleton().destroy("IpointsRanking");
+  
+  _sheet->destroyChild("InameControls");
+  CEGUI::ImageManager::getSingleton().destroy("InameControls");
+  
   _sheet-> destroyChild("RankingL");
   _sheet-> destroyChild("INameHunter");
   CEGUI::ImageManager::getSingleton().destroy("INameHunter");
@@ -198,4 +217,14 @@ void IntroScene::ActRanking(){
   Ranking* ran = new Ranking();
   ran -> leerPlayeryPuntos();
   ran -> acturanking();
+}
+
+void IntroScene::controls(){
+
+  if(_sheet->getChild("InameControls")->isVisible()){
+    _sheet->getChild("InameControls")->setVisible(false);
+  }else{
+    _sheet->getChild("InameControls")->setVisible(true);
+  }
+
 }

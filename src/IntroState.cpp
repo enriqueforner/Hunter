@@ -199,6 +199,10 @@ bool IntroState::retroceder_r(const CEGUI::EventArgs& e){
     _iS->retroceder();
     return true; 
 }
+bool IntroState::controlsButtonC(const CEGUI::EventArgs& e){
+    _iS->controls();
+    return true; 
+}
 void IntroState::loadCEGUI(){
 
   //CEGUI

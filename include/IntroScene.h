@@ -21,6 +21,7 @@ public:
 	void ActRanking();
 	void ranking();
 	void limpiarpantallaCEGUI();
+	void controls();
 	
 private:
 

@@ -62,6 +62,7 @@ class IntroState : public Ogre::Singleton<IntroState>, public GameState
   bool retroceder_c(const CEGUI::EventArgs& e);
   bool retroceder_r(const CEGUI::EventArgs& e);
   bool _lanzaranimacion;
+  bool controlsButtonC(const CEGUI::EventArgs& e);
   CEGUI::Renderer * getRenderer();
 
  protected:

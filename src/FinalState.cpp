@@ -186,7 +186,7 @@ void FinalState::LimpiarTodo(){
   renderer-> destroyTexture("InameRanking");
   renderer-> destroyTexture("IpointsRanking");
   renderer-> destroyTexture("INameHunter");
-
+  renderer-> destroyTexture("InameControls");
 
 }
 
