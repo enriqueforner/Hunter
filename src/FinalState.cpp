@@ -29,18 +29,20 @@ void
 FinalState::exit ()
 {
   //_sceneMgr->destroyCamera("IntroCamera");
+  _sceneMgr->destroyCamera("AerialCamera");
+  _sceneMgr-> destroyCamera("ProjectileCamera");
   CEGUI::Window* sheet = CEGUI::System::getSingleton().getDefaultGUIContext().getRootWindow();
   Ogre::Node *node;
   Ogre::Entity *entity;
   Ogre::Node::ChildNodeIterator iter = _sceneMgr->getRootSceneNode()->getChildIterator();
   while (iter.hasMoreElements()){
       node = iter.getNext();
-      DestroyAllAttachedMovableObjects(static_cast<Ogre::SceneNode*>(node));
+      //DestroyAllAttachedMovableObjects(static_cast<Ogre::SceneNode*>(node));
       static_cast<Ogre::SceneNode*>(node)->removeAndDestroyAllChildren();
       _sceneMgr->getRootSceneNode()->removeAndDestroyChild(node->getName());
   }
   static_cast<Ogre::SceneNode*>(_sceneMgr->getRootSceneNode())->removeAndDestroyAllChildren();
-  //actualizarranking();
+  
   _sPF -> cleanCegui();
   LimpiarTodo();
   _root->getAutoCreatedWindow()->removeAllViewports();
@@ -103,13 +105,10 @@ FinalState::keyPressed
   CEGUI::System::getSingleton().getDefaultGUIContext().injectChar(e.text);
   
   if (e.key == OIS::KC_ESCAPE) {
-    _exitGame = true;
-  }
-  if (e.key == OIS::KC_X) {
     if(actualizarranking()){
         _exitGame = true;
-    }    
-  }
+    } 
+  }  
    
 }
 
@@ -174,12 +173,10 @@ FinalState::getSingleton ()
   return *msSingleton;
 }
 
-bool FinalState::actualizarranking(){
-	return true;
-}
-
 bool FinalState::exitButtonC(const CEGUI::EventArgs& e){
-    _exitGame = true;
+    if(actualizarranking()){
+        _exitGame = true;
+    } 
     return true; 
 }
 
@@ -194,6 +191,17 @@ void FinalState::LimpiarTodo(){
 }
 
 bool FinalState::mainmenuButtonC(const CEGUI::EventArgs& e){
-    changeState(IntroState::getSingletonPtr());
+    if(actualizarranking()){
+        changeState(IntroState::getSingletonPtr());
+    } 
     return true; 
+}
+
+bool FinalState::actualizarranking(){
+    Ranking* ran = new Ranking();
+    string puntosplayer = _sPF->getPointsPlayer();
+    string nameplayer = _sPF-> getNamePlayer();
+    cout << nameplayer << ":" << puntosplayer << endl;
+    ran -> setrankingtxt(nameplayer,puntosplayer);
+    return true;
 }

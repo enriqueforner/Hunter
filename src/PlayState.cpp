@@ -32,6 +32,7 @@ PlayState::~PlayState(){}
 void
 PlayState::enter ()
 {
+  std::cout << "IN ENTER" << std::endl;
   _root = Ogre::Root::getSingletonPtr();
   // Se recupera el gestor de escena y la cámara.
   _sceneMgr = _root->getSceneManager("SceneManager");
@@ -54,7 +55,7 @@ PlayState::enter ()
   _timeLastObject = 0; // Tiempo desde que se añadio el ultimo objeto
 
   _mouse = InputManager::getSingletonPtr()->getMouse();
-  
+  std::cout << "SceneManager Mouse _viewport" << std::endl;
   // Creacion del modulo de debug visual de Bullet ------------------
   _debugDrawer = new OgreBulletCollisions::DebugDrawer();
   _debugDrawer->setDrawWireframe(true);  
@@ -89,6 +90,8 @@ PlayState::enter ()
   _trackedBody = NULL;
 
   // Creacion de los elementos iniciales del mundo
+  std::vector<OBEntity*> *obentitiesPTR = new std::vector<OBEntity*>;
+  _obEntities = *obentitiesPTR;
   
   CreateInitialWorld();
   _sceneMgr->setSkyBox(true, "MySky");
@@ -101,7 +104,7 @@ PlayState::enter ()
   _latestNodeCol = "none"; 
   _finalGame = false;
   CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().hide();
-
+  std::cout << "SKYBOX SCENAPLAY" << std::endl;
   //Crear el movementcontroller y el physicscontroller
   _points = 0;
   int *pointsPtr;
@@ -112,6 +115,7 @@ PlayState::enter ()
   _lanzaranimationPig = true;
   _forcePercent = 0;
   _vector_anims_pig = new std::vector<Ogre::AnimationState*>;
+   std::cout << "FIN ENTER" << std::endl;
   _exitGame = false;
 }
 
@@ -141,6 +145,7 @@ bool
 PlayState::frameStarted
 (const Ogre::FrameEvent& evt)
 {
+   std::cout << "frameStarted PLAY" << std::endl;
 
   Ogre::Vector3 vt(0,0,0);     Ogre::Real tSpeed = 20.0;  
   _deltaT = evt.timeSinceLastFrame;
@@ -183,7 +188,7 @@ PlayState::frameStarted
     //_projectileCamera->lookAt(_camera->getDerivedDirection());
     _projectileCamera->lookAt(trackedBodyPosition + projectileLookAt);
   }
-
+   std::cout << "CAMERAS" << std::endl;
   if(_shootKeyDown){
     _keyDownTime = _keyDownTime + _deltaT;
   }
@@ -202,14 +207,16 @@ PlayState::frameStarted
   //_sPF->getSheet()->getChild("PowerWindow")->update(_deltaT);
   //CEGUI::System::getSingleton().injectTimePulse(_deltaT);
   //DetectCollisionPig();
+   std::cout << "points power" << std::endl;
   _physicsController->detectCollision();  //Este es el bueno. Hay que cambiarlo para que compruebe colisiones sobre todo
+   std::cout << "pisis" << std::endl;
   _movementController->moveAll();
-
+  std::cout << "collision moveall" << std::endl;
   if(_finalGame){
       pushState(FinalState::getSingletonPtr());
   }
   lifeWolf();
-
+ std::cout << "wolf" << std::endl;
   if (_lanzaranimationPig){
     for (int i = 0; i < 3; ++i){
       std::ostringstream os;
@@ -235,7 +242,7 @@ PlayState::frameStarted
         }
       }
   }
-
+   std::cout << "animation" << std::endl;
   //RecorreVectorTAOAnadirMovimientoConstante();
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
@@ -252,7 +259,7 @@ PlayState::frameEnded
   
   _deltaT = evt.timeSinceLastFrame;
   _world->stepSimulation(_deltaT); // Actualizar simulacion Bullet
-
+   std::cout << "frameEnded PLAY" << std::endl;
   return true;
 }
 

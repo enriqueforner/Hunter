@@ -19,6 +19,9 @@ public:
 	void updatePower(int power);
 	void updatePoints(int points);
 	void cleanCegui();
+	std::string getPointsPlayer();
+	std::string getNamePlayer();
+
 private:
 
 	Ogre::SceneManager* _sceneManager;

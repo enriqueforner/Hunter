@@ -122,3 +122,11 @@ void ScenePlayFinal::cleanCegui(){
     _sheet-> destroyChild("Puntuacion");
 
 }
+
+std::string ScenePlayFinal::getPointsPlayer(){
+    return _sheet->getChild("Puntuacion")->getChild("PuntosPlayer")->getText().c_str(); 
+}
+
+std::string ScenePlayFinal::getNamePlayer(){
+    return _sheet->getChild("Puntuacion")->getChild("NombrePlayer")->getText().c_str();
+}

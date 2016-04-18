@@ -42,7 +42,6 @@ GameManager::start
 {
     /* Transición al estado inicial. */
     changeState(state);
-
     /* Bucle de rendering. */
     _root->startRendering();
 }

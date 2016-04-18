@@ -34,11 +34,11 @@ class FinalState : public Ogre::Singleton<FinalState>, public GameState
   static FinalState& getSingleton ();
   static FinalState* getSingletonPtr ();
   void DestroyAllAttachedMovableObjects(Ogre::SceneNode* i_pSceneNode);
-  bool actualizarranking();
+ 
   bool exitButtonC(const CEGUI::EventArgs& e);
   bool mainmenuButtonC(const CEGUI::EventArgs& e);
-
   void LimpiarTodo();
+  bool actualizarranking();
 
  protected:
  
