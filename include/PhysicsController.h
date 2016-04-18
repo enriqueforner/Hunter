@@ -28,24 +28,14 @@ using namespace OgreBulletDynamics;
 class PhysicsController{
 	public:
 		PhysicsController();
-		PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world, std::vector <OBEntity*> *obEntities, int *pointsPtr); //std::vector <OBEntity*> *obEntities
-		//~PhysicsController();
+		PhysicsController(Ogre::SceneManager *sceneMgr, OgreBulletDynamics::DynamicsWorld *world, std::vector <OBEntity*> *obEntities, int *pointsPtr); 
 		void detectCollision();
 		Ogre::SceneManager *getSceneManager();
 		OgreBulletDynamics::DynamicsWorld *getWorld();
-		// MovementController *getMovementController();
-		//std::vector <OBEntity*> *getOBEntities();
 		void setSceneManager(Ogre::SceneManager *sceneMgr);
 		void setWorld(OgreBulletDynamics::DynamicsWorld *world);
-		// void setMovementController(MovementController *movementController);
-		//void setOBEntities(std::vector <OBEntity*> *obEntities);
 		bool _firstCol;
-		std::string _latestNodeCol1;
-		std::string _latestNodeCol2;
-		void deleteNode(std::string name);
-		void deleteOBEntity(OBEntity *OBEntity);
-		void reasignIndexes();
-		OBEntity* getOBEntitieByName(std::string name);
+		OBEntity* getOBEntityByName(std::string name);
 
 		bool _finalGame;
 	private:
@@ -53,7 +43,6 @@ class PhysicsController{
 		Ogre::SceneManager *_sceneMgr;
 		OgreBulletDynamics::DynamicsWorld *_world;
 		MovementController *_movementController;
-		//std::vector <OBEntity*> *_obEntities;
 		std::vector<String> *_rocks;
 		int *_pointsPtr;
 

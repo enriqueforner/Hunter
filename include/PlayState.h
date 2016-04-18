@@ -77,17 +77,13 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   CEGUI::MouseButton convertMouseButton(OIS::MouseButtonID id);
   void CreateInitialWorld();
-  //void AddDynamicObject(TEDynamicObject tObject);
   void AddAndThrowDynamicObject(std::string type, double force);
-  //RigidBody* pickBody (Vector3 &p, Ray &r, float x, float y);
 
   // Heredados de Ogre::Singleton.
   static PlayState& getSingleton ();
   static PlayState* getSingletonPtr ();
+
   void ColocarWolfAndRedilAndPig();
-  void DetectCollisionPig();
-  void TEDynamicObjectMovement();
-  void RecorreVectorTAOAnadirMovimientoConstante();
   void CreationWolf();
   void CrearBosqueAndColina();
   void isFinalGame();
@@ -108,8 +104,6 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   int _numEntities;
   float _timeLastObject;
 
-  std::deque <OgreBulletDynamics::RigidBody*>         _bodies;
-  std::deque <OgreBulletCollisions::CollisionShape*>  _shapes;
   std::vector <OBEntity*>  _obEntities;
   
   bool _exitGame;
@@ -127,9 +121,6 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   MovementController *_movementController;
   PhysicsController *_physicsController;
-
-  std::vector <OgreBulletDynamics::RigidBody*>         _bodiesC;
-  std::vector <OgreBulletCollisions::CollisionShape*>  _shapesC;
 
   ScenePlayFinal* _sPF;
 

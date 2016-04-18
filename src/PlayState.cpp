@@ -110,7 +110,7 @@ PlayState::enter ()
   int *pointsPtr;
   pointsPtr = &_points;
   std::cout << *pointsPtr << std::endl;
-  _movementController = new MovementController(_sceneMgr,&_bodies,&_shapes,&_obEntities);
+  _movementController = new MovementController(_sceneMgr,&_obEntities);
   _physicsController = new PhysicsController(_sceneMgr, _world, &_obEntities, pointsPtr);
   _lanzaranimationPig = true;
   _forcePercent = 0;
@@ -150,17 +150,8 @@ PlayState::frameStarted
   Ogre::Vector3 vt(0,0,0);     Ogre::Real tSpeed = 20.0;  
   _deltaT = evt.timeSinceLastFrame;
 
-  int fps = 1.0 / _deltaT;
-  bool mbleft, mbmiddle, mbright; // Botones del raton pulsados
-
   _world->stepSimulation(_deltaT); // Actualizar simulacion Bullet
   _timeLastObject -= _deltaT;
-
-  int posx = _mouse->getMouseState().X.abs;   // Posicion del puntero
-  int posy = _mouse->getMouseState().Y.abs;   //  en pixeles.
-
-  //std::cout << posx << " " << posy <<"\n";
-  mbmiddle = _mouse->getMouseState().buttonDown(OIS::MB_Middle);
 
   _camera->moveRelative(vt * _deltaT * tSpeed);
   if (_camera->getPosition().length() < 10.0) {
@@ -173,13 +164,6 @@ PlayState::frameStarted
 
   //CONTROLAR LA DIRECCION DE LA CAMARA DEL PROYECTIL
   _projectileCamera->lookAt(_camera->getDerivedDirection());
-
-  if(mbmiddle){
-    float rotx = _mouse->getMouseState().X.rel * _deltaT * -1;
-    float roty = _mouse->getMouseState().Y.rel * _deltaT * -1;
-    _camera->yaw(Ogre::Radian(rotx));
-    _camera->pitch(Ogre::Radian(roty));  
-  }
   
   if(_trackedBody){
     _projectileCamera->setPosition(_trackedBody->getCenterOfMassPosition());
@@ -282,7 +266,6 @@ PlayState::keyPressed
   else{
     _keyDownTime = 0.0;
   }
-  // if (e.key == OIS::KC_D) _world->setShowDebugShapes (true); 
   if (e.key == OIS::KC_H){
     OBEntity *obAux = new OBEntity("none");
     std::cout << "OBEntities" << std::endl;
@@ -357,17 +340,6 @@ void
 PlayState::mousePressed
 (const OIS::MouseEvent &e, OIS::MouseButtonID id)
 {
-  /*  */
-  /*PARECE QUE OIS Y CEGUI YA ESTAN SINCRONIZADOS PERO SIGUEN SIN IR BIEN LOS EMPUJONES (POR UN POQUILLO)
-   std::cout << "OIS X: " << _mouse->getMouseState().X.abs << "\n"; 
-   std::cout << "OIS Y: " << _mouse->getMouseState().Y.abs << "\n";
-
-   CEGUI::Vector2f posCegui = CEGUI::System::getSingleton().getDefaultGUIContext().getMouseCursor().getPosition();
-
-   std::cout << "CEGUI X: " << posCegui.d_x << "\n"; 
-   std::cout << "CEGUI Y: " << posCegui.d_y << "\n";
-
-   */
    CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonDown(convertMouseButton(id));
 
     float F;
@@ -378,59 +350,16 @@ PlayState::mousePressed
     float y = posy/float(_viewport->getActualWidth());  // Pos y normalizada
 
    if(e.state.buttonDown(OIS::MB_Left)){
-      //std::cout << "BOTON IZQUIERDO PULSADO\n";
-      //CEGUI::Window *window = _sPF->getSheet()->getChild("PowerWindow");
       _shootKeyDown = true;
-      //if(THROW_FORCE*_keyDownTime > MAX_FORCE){
-      //_forcePercent = 100;
-        /*std::stringstream text;
-        text << _forcePercent;
-        window->setText(text.str());*/
-      //}
-      //else{
-      // _forcePercent = (THROW_FORCE*_keyDownTime / MAX_FORCE) * 100;
-        /*std::stringstream text;
-        text << _forcePercent;
-        window->setText(text.str());*/
-        
-      //}
-
-      //std::cout << "VA?" << std::endl;
-      // F = 10;
-
-      // body = pickBody (p, r, x, y);
-
-      // if (body) {  
-      //   if (!body->isStaticObject()) { 
-      //     body->enableActiveState ();
-      //     Vector3 relPos(p - body->getCenterOfMassPosition());
-      //     Vector3 impulse (r.getDirection ());
-      //     body->applyImpulse (impulse * F, relPos); 
-      //   }
-      // }  
    }
 
    else if(e.state.buttonDown(OIS::MB_Right)){
       std::cout << "BOTON DERECHO PULSADO\n";
-      // F = 100; 
-
-      // body = pickBody (p, r, x, y);
-
-      // if (body) {  
-      //   if (!body->isStaticObject()) { 
-      //     body->enableActiveState ();
-      //     Vector3 relPos(p - body->getCenterOfMassPosition());
-      //     Vector3 impulse (r.getDirection ());
-      //     body->applyImpulse (impulse * F, relPos); 
-      //   }
-      // }  
    }
 
    else if(e.state.buttonDown(OIS::MB_Middle)){
       std::cout << "BOTON RUEDA PULSADO\n";
    }
-
-
 }
 
 void
@@ -439,35 +368,18 @@ PlayState::mouseReleased
 {
  CEGUI::System::getSingleton().getDefaultGUIContext().injectMouseButtonUp(convertMouseButton(id));
   double tForce = 0.0;
-  //std::cout << "BOTON IZQUIERDO SOLTADO\n";   
   if(_timeLastObject <= 0){
     tForce = THROW_FORCE*_keyDownTime;
     if(tForce > MAX_FORCE){
       tForce = MAX_FORCE;
     }
     _forcePercent = (tForce / MAX_FORCE) * 100;
-    /*CEGUI::Window *window = _sPF->getSheet()->getChild("PowerWindow");
-    std::stringstream text;
-    text << _forcePercent;
-    window->setText(text.str());
-    //std::cout << _keyDownTime << std::endl;
-    std::cout << "FUERZA "<< text.str() <<std::endl;*/
     _sPF->updatePower(_forcePercent);
     AddAndThrowDynamicObject("rock", tForce); //poner aqui el tipo de cosa que tirar
     _forcePercent = 0;
   }
   _shootKeyDown = false;
   _keyDownTime = 0.0;
-  
-  /*if(e.state.buttonUp(OIS::MB_Left)){
-      std::cout << "BOTON IZQUIERDO SOLTADO\n";
-  }
-   else if(e.state.buttonUp(OIS::MB_Right)){
-      std::cout << "BOTON DERECHO SOLTADO\n";
-   }
-   else if(e.state.buttonUp(OIS::MB_Middle)){
-      std::cout << "BOTON RUEDA SOLTADO\n";
-   }*/
 }
 
 PlayState*
@@ -531,22 +443,14 @@ void PlayState::CreateInitialWorld() {
   rigidBodyPlane->setStaticShape(Shape, 0.1, 0.8); 
   std::cout << "Hola" << std::endl;
   
-  // Anadimos los objetos Shape y RigidBody ------------------------
-  _shapes.push_back(Shape);      
-  _bodies.push_back(rigidBodyPlane);
-
   ColocarWolfAndRedilAndPig();
   CrearBosqueAndColina();
   CreationWolf();
   std::cout << "BOSQUE AND COLINA COLOCADAS" <<std::endl;
-  //TEDynamicObjectMovement();
-  //std::cout << "FIN DE TEDYNAMIC" <<std::endl;
-
 }
 
 void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
-  //AddDynamicObject(tObject);
-  _timeLastObject = SHOOT_COOLDOWN;   // Segundos para anadir uno nuevo... 
+  _timeLastObject = SHOOT_COOLDOWN;   // Segundos para anadir uno nuevo
 
   Vector3 size = Vector3::ZERO; 
   Vector3 position = (_camera->getDerivedPosition() 
@@ -555,7 +459,6 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   Entity *entity = NULL;
   std::stringstream uniqueName;
   uniqueName <<type << _numEntities;
-  //OBEntity *obentity = new OBEntity(type);
   OBEntity *obentity = new OBEntity(uniqueName.str());
 
   entity = _sceneMgr->createEntity(uniqueName.str(), "PiedraLanzar.mesh");
@@ -570,7 +473,6 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   OgreBulletCollisions::CollisionShape *bodyShape = NULL;
   OgreBulletDynamics::RigidBody *rigidBody = NULL;
 
-
   trimeshConverter = new 
     OgreBulletCollisions::StaticMeshToShapeConverter(entity);
   bodyShape = trimeshConverter->createConvex();
@@ -578,10 +480,6 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
 
   obentity->setCollisionShape(bodyShape);
 
-  /*rigidBody = new OgreBulletDynamics::RigidBody("rigidBody" + 
-     StringConverter::toString(_numEntities), _world);*/
-
-  
   uniqueName << "rig";
   rigidBody = new OgreBulletDynamics::RigidBody(uniqueName.str(), _world);
 
@@ -591,69 +489,15 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
          Quaternion::IDENTITY /* Orientacion */);
 
   rigidBody->setLinearVelocity(
-     _camera->getDerivedDirection().normalisedCopy() * force);  //7.0
+     _camera->getDerivedDirection().normalisedCopy() * force);  
 
   obentity->setRigidBody(rigidBody);
 
   _numEntities++;
 
-  // Anadimos los objetos a las deques
-  _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
-  
+  // Anadimos los objetos a las deques  
   _trackedBody = rigidBody;
   _obEntities.push_back(obentity);
-  //obentity->setIndex(_obEntities.size()-1);
-}
-
-//SOLO DETECTA LA COLISION CON EL CERDO QUE SE ESTA MOVIENDO
-void PlayState::DetectCollisionPig() {
-  //CODIGO COMENTADO PARA DETECTAR COLISIONES EN LOS DEMAS OBJETOS YA SEA EN MOVIMENTO O QUIETOS
-  btCollisionWorld *bulletWorld = _world->getBulletCollisionWorld();
-  // DE MOMENTO DETECTA COLISIONES SI PASA MUY CERCA
-  int numManifolds = bulletWorld->getDispatcher()->getNumManifolds();
-
-  for (int i=0;i<numManifolds;i++) {
-    btPersistentManifold* contactManifold = 
-      bulletWorld->getDispatcher()->getManifoldByIndexInternal(i);
-    btCollisionObject* obA = 
-      (btCollisionObject*)(contactManifold->getBody0());
-    btCollisionObject* obB = 
-      (btCollisionObject*)(contactManifold->getBody1());
-    //OgreBulletCollisions::Object *obDrain = _world->findObject(drain);
-    //CHOCAR CON LOBOS
-    for (int i = 0; i < 5; ++i){
-        
-    std::ostringstream os;
-    os << "wolf" << i;
-    
-    Ogre::SceneNode* drain = _sceneMgr->getSceneNode(os.str());
-
-    OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
-    
-    OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
-    OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
-    
-    if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
-      Ogre::SceneNode* node = NULL;
-      if ((obOB_A != obDrain) && (obOB_A)) {
-        node = obOB_A->getRootNode(); delete obOB_A;
-      }
-      else if ((obOB_B != obDrain) && (obOB_B)) {
-        node = obOB_B->getRootNode(); delete obOB_B;
-      }
-      //El siguiente trozo de codigo sirve para detectar solo el primer "golpe" de una colision
-      if(node){
-        
-          std::cout << "DETECTED COLLISION: " << node->getName() << std::endl; 
-         
-          std::cout << node->getName() << std::endl;
-          _sceneMgr->getRootSceneNode()->removeAndDestroyChild (node->getName());
-         
-      }
-    }
-    //} 
-    }
-  }
 }
 
 void PlayState::CrearBosqueAndColina(){
@@ -681,7 +525,6 @@ void PlayState::CrearBosqueAndColina(){
       OgreBulletDynamics::RigidBody(uniqueName.str(), _world);
         rigidObjectA->setShape(nodeArbol, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(-(0 + distV), 0, mover + distH), 
         Quaternion::IDENTITY); 
-      _bodies.push_back(rigidObjectA);
       distH = distH + 8;
       numArbolesGlobal = numArbolesGlobal + 1;
       numArboles = numArboles +1;
@@ -694,7 +537,6 @@ void PlayState::CrearBosqueAndColina(){
           mover = -100;
           distV = 0;
       }
-      //_numEntities++;
     }
     //Parte Final
     distV = 0;
@@ -717,7 +559,6 @@ void PlayState::CrearBosqueAndColina(){
       OgreBulletDynamics::RigidBody(uniqueName.str(), _world);
         rigidObjectA->setShape(nodeArbol, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(-85 -(distV), 0, -47 + distH), 
         Quaternion::IDENTITY); 
-      _bodies.push_back(rigidObjectA);
       numArbolesGlobal = numArbolesGlobal + 1;
       distH = distH + 7;
       if(i==14){
@@ -725,7 +566,6 @@ void PlayState::CrearBosqueAndColina(){
           distH = 3;
       }
     }
-
 
     Entity *entityColina = _sceneMgr->createEntity("Colina","ColinaJugador.mesh");
     SceneNode *nodeColina = _sceneMgr->createSceneNode("Colina");
@@ -742,11 +582,7 @@ void PlayState::CrearBosqueAndColina(){
     OgreBulletDynamics::RigidBody("Colina", _world);
       rigidObjectColina->setShape(nodeColina, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(55,0.50,0), 
       Quaternion::IDENTITY); 
-    _bodies.push_back(rigidObjectColina);
-
-
 }
-
 
 void PlayState::ColocarWolfAndRedilAndPig() {
   // CREACION REDIL PARA PONER ANIMALES
@@ -771,7 +607,6 @@ void PlayState::ColocarWolfAndRedilAndPig() {
   int posz[] = {0,-2,2};
   int posD[] = {0,-120,200};
   
-  
   for (int i = 0; i < 3; ++i){
       std::ostringstream os;
       os << "pigA" << i;
@@ -789,82 +624,17 @@ void PlayState::ColocarWolfAndRedilAndPig() {
   }
 }
 
-void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string type como parametro
-    //CODIGO COMENTADO PARA AÑADIR 200
-    //int posx[3] = {7,14,21};
-    for (int i = 0; i < 3; ++i){  
-      //TEDynamicObject taO;
-      Entity *entity = NULL;
-      //OBEntity *obentity = new OBEntity(taO);
-      
-      std::stringstream uniqueName;
-      uniqueName <<"pig" << _numEntities; //uniqueName <<type << _numEntities;
-      OBEntity *obentity = new OBEntity(uniqueName.str()); //type
-      
-      //CerdoMaloE
-      /*entity = _sceneMgr->createEntity("CerdoMaloE" + 
-      //StringConverter::toString(_numEntities), "sheep.mesh");
-      StringConverter::toString(i) ,"CerdoIni.mesh");*/
-
-      entity = _sceneMgr->createEntity(uniqueName.str(), "CerdoIni.mesh");     
-
-      SceneNode *node = _sceneMgr->getRootSceneNode()->
-      createChildSceneNode(entity->getName());
-      node->attachObject(entity);
-
-      obentity->setSceneNode(node);
-
-      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter = NULL; 
-      OgreBulletCollisions::CollisionShape *bodyShape = NULL;
-      OgreBulletDynamics::RigidBody *rigidBody = NULL;
-
-      trimeshConverter = new 
-      OgreBulletCollisions::StaticMeshToShapeConverter(entity);
-      bodyShape = trimeshConverter->createConvex();
-      delete trimeshConverter;
-
-      obentity->setCollisionShape(bodyShape);
-      uniqueName << "rig";
-      rigidBody = new OgreBulletDynamics::RigidBody(uniqueName.str() /*+ 
-      StringConverter::toString(i),*/, _world);
-
-      rigidBody->setShape(node, bodyShape,
-         0.6 /* Restitucion */, 0.6 /* Friccion */,
-         5.0 /* Masa */, Ogre::Vector3(0, 0, i*2.5),  // 0,0,35
-         Quaternion::IDENTITY /* Orientacion */);
-      //rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
-        rigidBody->setLinearVelocity(Ogre::Vector3::ZERO);
-
-      obentity->setRigidBody(rigidBody);  
-   
-      _shapesC.push_back(bodyShape);   _bodiesC.push_back(rigidBody);
-      _obEntities.push_back(obentity);
-      obentity->setIndex(_obEntities.size()-1);
-      _numEntities ++;
-    }
- } 
-
- void PlayState::RecorreVectorTAOAnadirMovimientoConstante(){
-    for(std::vector<OgreBulletDynamics::RigidBody *>::iterator it = _bodiesC.begin(); it != _bodiesC.end(); ++it) {
-          (*it) -> setLinearVelocity(Ogre::Vector3(0,0,1));  
-    }
- }
-
- void PlayState::CreationWolf(){
-    //int newwolf = ;
+ void PlayState::CreationWolf(){ //Poner wolves
     int posH = 4;
-    //int posx[3] = {7,14,21};
     int H = -20;
     int V = 0;
     for (int i = 0; i < 19; ++i){  
-      //TEDynamicObject taO;
       Entity *entity = NULL;
-      //OBEntity *obentity = new OBEntity(taO);
       
       std::stringstream uniqueName;
-      uniqueName <<"wolf" << _numEntities; //uniqueName <<type << _numEntities;
+      uniqueName <<"wolf" << _numEntities; 
       
-      OBEntity *obentity = new OBEntity(uniqueName.str()); //type
+      OBEntity *obentity = new OBEntity(uniqueName.str()); 
       
       entity = _sceneMgr->createEntity(uniqueName.str(), "Lobo.mesh");     
 
@@ -886,22 +656,17 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
       delete trimeshConverter;
 
       obentity->setCollisionShape(bodyShape);
-      //uniqueName << "rig";
-      rigidBody = new OgreBulletDynamics::RigidBody(uniqueName.str() /*+ 
-      StringConverter::toString(i),*/, _world);
+      rigidBody = new OgreBulletDynamics::RigidBody(uniqueName.str(), _world);
 
       rigidBody->setShape(node, bodyShape,
          0.0 /* Restitucion */, 0.6 /* Friccion */,
          150.0 /* Masa */, Ogre::Vector3(-70 + V, 0, H + posH),  // 0,0,35
-         node->_getDerivedOrientation()/* Orientacion */);
-      //rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
-        rigidBody->setLinearVelocity(Ogre::Vector3::ZERO);
+         node->_getDerivedOrientation()/* Orientacion */); 
+      rigidBody->setLinearVelocity(Ogre::Vector3::ZERO);
 
       obentity->setRigidBody(rigidBody);  
    
-      //_shapesC.push_back(bodyShape);   _bodiesC.push_back(rigidBody);
       _obEntities.push_back(obentity);
-      obentity->setIndex(_obEntities.size()-1);
       _numEntities ++;
       posH = posH + 4;
       if(i ==9){
@@ -909,8 +674,6 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
           posH = 6;
           V = -5;
       }
-      //newwolf++;
-
     }  
  }
 
@@ -937,110 +700,3 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
         isFinalGame();
     }
  }
-
-
-//CODIGO DEL CHOQUE CON LOBOS
-
- /*
-//OgreBulletCollisions::Object *obDrain = _world->findObject(drain);
-    //CHOCAR CON LOBOS
-    for (int i = 0; i < 5; ++i){
-        std::ostringstream os;
-        os << "wolf" << i;
-        Ogre::SceneNode* drain = _sceneMgr->getSceneNode(os.str());
-
-        OgreBulletCollisions::Object *obDrain = _world->findObject(drain);  
-    
-
-        OgreBulletCollisions::Object *obOB_A = _world->findObject(obA);
-        OgreBulletCollisions::Object *obOB_B = _world->findObject(obB);
-
-    if ((obOB_A == obDrain) || (obOB_B == obDrain)) {
-      Ogre::SceneNode* node = NULL;
-      if ((obOB_A != obDrain) && (obOB_A)) {
-        node = obOB_A->getRootNode(); /*delete obOB_A*/;
-    /*  }
-      else if ((obOB_B != obDrain) && (obOB_B)) {
-        node = obOB_B->getRootNode(); /*delete obOB_B*/;
-      /*}
-      if (node) {
-        std::cout << node->getName() << "ESTA TOCANDO" << std::endl;
-        
-      }
-    }
-    } */
-
-
-
-//     void PlayState::AddDynamicObject(TEDynamicObject tObject) {
-//   _timeLastObject = 0.25;   // Segundos para anadir uno nuevo... 
-
-//   Vector3 size = Vector3::ZERO; 
-//   Vector3 position = (_camera->getDerivedPosition() 
-//      + _camera->getDerivedDirection().normalisedCopy() * 10);
- 
-//   Entity *entity = NULL;
-//   switch (tObject) {
-//   case sheep:
-//      entity = _sceneMgr->createEntity("Sheep" + 
-//      //StringConverter::toString(_numEntities), "sheep.mesh");
-//      StringConverter::toString(_numEntities), "CerdoIni.mesh");
-//     break;
-//   case box: default: 
-//     entity = _sceneMgr->createEntity("Box" + 
-//     //StringConverter::toString(_numEntities), "cube.mesh");
-//     StringConverter::toString(_numEntities), "CerdoIni.mesh");  
-//     entity->setMaterialName("cube");
-//   }
-
-//   SceneNode *node = _sceneMgr->getRootSceneNode()->
-//     createChildSceneNode();
-//   node->attachObject(entity);
-
-//   OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter = NULL; 
-//   OgreBulletCollisions::CollisionShape *bodyShape = NULL;
-//   OgreBulletDynamics::RigidBody *rigidBody = NULL;
-
-//   switch (tObject) {
-//   case sheep: 
-//     trimeshConverter = new 
-//       OgreBulletCollisions::StaticMeshToShapeConverter(entity);
-//     bodyShape = trimeshConverter->createConvex();
-//     delete trimeshConverter;
-//     break;
-//   case box: default: 
-//     AxisAlignedBox boundingB = entity->getBoundingBox();
-//     size = boundingB.getSize(); 
-//     size /= 2.0f;   // El tamano en Bullet se indica desde el centro
-//     bodyShape = new OgreBulletCollisions::BoxCollisionShape(size);
-//   }
-
-//   rigidBody = new OgreBulletDynamics::RigidBody("rigidBody" + 
-//      StringConverter::toString(_numEntities), _world);
-
-//   rigidBody->setShape(node, bodyShape,
-//          0.6 /* Restitucion */, 0.6 /* Friccion */,
-//          5.0 /* Masa */, position /* Posicion inicial */,
-//          Quaternion::IDENTITY /* Orientacion */);
-
-//   rigidBody->setLinearVelocity(
-//      _camera->getDerivedDirection().normalisedCopy() * 7.0); 
-
-//   _numEntities++;
-
-//   // Anadimos los objetos a las deques
-//   _shapes.push_back(bodyShape);   _bodies.push_back(rigidBody);
-// }
-
-// RigidBody* PlayState::pickBody (Vector3 &p, Ray &r, float x, float y) {
-//   r = _camera->getCameraToViewportRay (x, y);
-//   CollisionClosestRayResultCallback cQuery = 
-//     CollisionClosestRayResultCallback (r, _world, 10000);
-//   _world->launchRay(cQuery);
-//   if (cQuery.doesCollide()) {
-//     RigidBody* body = (RigidBody *) (cQuery.getCollidedObject());
-//     p = cQuery.getCollisionPoint();
-//     return body;
-//   }
-//   return NULL;
-// }
