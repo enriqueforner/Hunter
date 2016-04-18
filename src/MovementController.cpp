@@ -159,6 +159,11 @@ void MovementController::moveAll(){
           }else{
               //std::cout << "ES UN WOLF" <<std::endl;
               //*targetAux = _wolfGuideTarget; 
+          	  btQuaternion quat;
+          	  btTransform transf = obAux->getRigidBody()->getCenterOfMassTransform();
+          	  quat = transf.getRotation();
+          	  quat.setEuler(0,180,0);
+          	  //transf.setRotation(quat);
               *targetAux = _sceneMgr->getSceneNode("Redil")->getPosition(); 
               *originAux = obAux->getSceneNode()->getPosition();
               speed = getResultVector(originAux, targetAux, NPC_SPEED); 
