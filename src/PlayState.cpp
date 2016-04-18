@@ -579,8 +579,8 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   rigidBody = new OgreBulletDynamics::RigidBody(uniqueName.str(), _world);
 
   rigidBody->setShape(node, bodyShape,
-         0.6 /* Restitucion */, 0.6 /* Friccion */,
-         5.0 /* Masa */, position /* Posicion inicial */,
+         0.0 /* Restitucion */, 1.0 /* Friccion */,
+         50.0 /* Masa */, position /* Posicion inicial */,
          Quaternion::IDENTITY /* Orientacion */);
 
   rigidBody->setLinearVelocity(
@@ -884,8 +884,8 @@ void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string typ
       StringConverter::toString(i),*/, _world);
 
       rigidBody->setShape(node, bodyShape,
-         0.6 /* Restitucion */, 0.6 /* Friccion */,
-         5.0 /* Masa */, Ogre::Vector3(-70 + V, 0, H + posH),  // 0,0,35
+         0.0 /* Restitucion */, 0.6 /* Friccion */,
+         150.0 /* Masa */, Ogre::Vector3(-70 + V, 0, H + posH),  // 0,0,35
          node->_getDerivedOrientation()/* Orientacion */);
       //rigidBody->setLinearVelocity(Ogre::Vector3(0,0,7));  
         rigidBody->setLinearVelocity(Ogre::Vector3::ZERO);
