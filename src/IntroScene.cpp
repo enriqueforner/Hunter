@@ -109,7 +109,7 @@ void IntroScene::crearWorld(){
 
   	_sceneManager->getRootSceneNode()->addChild(node2);
 
-  	Ogre::Entity* entc = _sceneManager->createEntity("CerdoIni", "CerdoIni.mesh");
+  	Ogre::Entity* entc = _sceneManager->createEntity("CerdoIni", "CerdoAnim.mesh");
   	Ogre::SceneNode* nodecer = _sceneManager->createSceneNode("CerdoIni");
   	nodecer->attachObject(entc);
     nodecer-> setPosition(9,5,20);
@@ -117,7 +117,7 @@ void IntroScene::crearWorld(){
     // roll --> z
     // pitch --> x
     // yaw --> y
-    nodecer->yaw(Ogre::Degree(35));
+    nodecer->yaw(Ogre::Degree(-35));
     _sceneManager->getRootSceneNode()->addChild(nodecer);
 
     Ogre::Entity* entl = _sceneManager->createEntity("LoboInicio", "Lobo.mesh");

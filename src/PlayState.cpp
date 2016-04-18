@@ -70,7 +70,7 @@ PlayState::enter ()
   _world = new OgreBulletDynamics::DynamicsWorld(_sceneMgr,
      worldBounds, gravity);
   _world->setDebugDrawer (_debugDrawer);
-  _world->setShowDebugShapes (true);  // Muestra los collision shapes
+  _world->setShowDebugShapes (false);  // Muestra los collision shapes
 
   //CAMARA 2
   _aerialCamera = _sceneMgr->createCamera("AerialCamera");
@@ -105,9 +105,10 @@ PlayState::enter ()
   //Crear el movementcontroller y el physicscontroller
   _movementController = new MovementController(_sceneMgr,&_bodies,&_shapes,&_obEntities);
   _physicsController = new PhysicsController(_sceneMgr, _world,_movementController, &_obEntities);
-
+  _lanzaranimationPig = true;
   _forcePercent = 0;
   _points = 0;
+  _vector_anims_pig = new std::vector<Ogre::AnimationState*>;
   _exitGame = false;
 }
 
@@ -205,6 +206,33 @@ PlayState::frameStarted
       pushState(FinalState::getSingletonPtr());
   }
   lifeWolf();
+
+  if (_lanzaranimationPig){
+    for (int i = 0; i < 3; ++i){
+      std::ostringstream os;
+      os << "pigA" <<i; 
+      Ogre::AnimationState* animStatePig = _sceneMgr->getEntity(os.str())-> getAnimationState("SaltoR");
+      animStatePig->setTimePosition(0.0);
+      animStatePig->setEnabled(true);
+      animStatePig->setLoop(true);
+      _vector_anims_pig -> push_back(animStatePig);
+    }
+    _lanzaranimationPig = false;
+  }
+  
+
+  for (int i = 0; i < 3; ++i){
+      Ogre::AnimationState* animStatePig = _vector_anims_pig->at(i);
+      if (animStatePig != NULL){
+        if (animStatePig->hasEnded()){
+          animStatePig->setTimePosition(0.0);
+          animStatePig->setEnabled(false);
+        }else{
+          animStatePig->addTime(_deltaT);
+        }
+      }
+  }
+
   //RecorreVectorTAOAnadirMovimientoConstante();
   //std::cout << "Hasta aqui todo bien 1" << std::endl;
 
@@ -504,25 +532,6 @@ void PlayState::CreateInitialWorld() {
   //TEDynamicObjectMovement();
   //std::cout << "FIN DE TEDYNAMIC" <<std::endl;
 
-  //CREACION DEL SUPER CERDO CHOCADOR
-  Entity *entity2 = _sceneMgr->createEntity("CERDO","CerdoIni.mesh");
-  SceneNode *node2 = _sceneMgr->createSceneNode("CERDO");
-  node2->attachObject(entity2);
-  //node2-> setPosition(9,7,20);
-  //node2->setScale(3,3,3);
-  
-  _sceneMgr->getRootSceneNode()->addChild(node2);
-  OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverter2 = new 
-    OgreBulletCollisions::StaticMeshToShapeConverter(entity2);
-
-  OgreBulletCollisions::TriangleMeshCollisionShape *Trimesh2 = 
-    trimeshConverter2->createTrimesh();
-
-  OgreBulletDynamics::RigidBody *rigidObject2 = new 
-    OgreBulletDynamics::RigidBody("CERDO", _world);
-  rigidObject2->setShape(node2, Trimesh2, 3, 3, 0, Ogre::Vector3(1,4,2), 
-       Quaternion::IDENTITY);
-
 }
 
 void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
@@ -539,11 +548,6 @@ void PlayState::AddAndThrowDynamicObject(std::string type, double force) {
   //OBEntity *obentity = new OBEntity(type);
   OBEntity *obentity = new OBEntity(uniqueName.str());
 
-  //Ponerle nombres distintos segun el tipo de OBEntity que sea, para luego gestionar bien las colisiones
-
-  /*entity = _sceneMgr->createEntity("OBEntity" + 
-  //StringConverter::toString(_numEntities), "sheep.mesh");
-  StringConverter::toString(_numEntities), "CerdoIni.mesh");*/
   entity = _sceneMgr->createEntity(uniqueName.str(), "PiedraLanzar.mesh");
 
   SceneNode *node = _sceneMgr->getRootSceneNode()->
@@ -752,29 +756,27 @@ void PlayState::ColocarWolfAndRedilAndPig() {
     OgreBulletDynamics::RigidBody("Redil", _world);
   rigidObjectR->setShape(nodeRedil, TrimeshR, 0.5, 0.5, 0, Ogre::Vector3(30,0,0), 
        Quaternion::IDENTITY);        
-  /*
-  int posx[5] = {20,30,40,50,60};
-  for (int i = 0; i < 5; ++i){
+  
+  int posx[] = {30,35,35};
+  int posz[] = {0,-2,2};
+  int posD[] = {0,-120,200};
+  
+  
+  for (int i = 0; i < 3; ++i){
       std::ostringstream os;
-      os << "wolf" << i;
+      os << "pigA" << i;
 
-      Entity *entityWolf = _sceneMgr->createEntity(os.str(),"Lobo.mesh");
-      SceneNode *nodeWolf = _sceneMgr->createSceneNode(os.str());
-      nodeWolf->attachObject(entityWolf);
-      nodeWolf-> setPosition(10,200,posx[i]);
-
-      _sceneMgr->getRootSceneNode()->addChild(nodeWolf);
-      OgreBulletCollisions::StaticMeshToShapeConverter *trimeshConverterW = new 
-          OgreBulletCollisions::StaticMeshToShapeConverter(entityWolf);
-
-      OgreBulletCollisions::TriangleMeshCollisionShape *TrimeshW = 
-          trimeshConverterW->createTrimesh();
-      OgreBulletDynamics::RigidBody *rigidObjectW = new 
-        OgreBulletDynamics::RigidBody(os.str(), _world);
-      rigidObjectW->setShape(nodeWolf, TrimeshW, 0.5, 0.5, 0,  Ogre::Vector3(-posx[i], 0, 0), 
-        Quaternion::IDENTITY);        
+      Ogre::Entity* entc = _sceneMgr->createEntity(os.str(), "CerdoAnim.mesh");
+      Ogre::SceneNode* nodecer = _sceneMgr->createSceneNode(os.str());
+      nodecer->attachObject(entc);
+      nodecer-> setPosition(posx[i],0,posz[i]);
+      // roll --> z
+      // pitch --> x
+      // yaw --> y
+      nodecer->yaw(Ogre::Degree(posD[i]));
+      _sceneMgr->getRootSceneNode()->addChild(nodecer);
       
-  }*/
+  }
 }
 
 void PlayState::TEDynamicObjectMovement(){  //cambiar a que coja std::string type como parametro

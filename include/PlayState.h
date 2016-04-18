@@ -119,6 +119,7 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
   bool _firstCol;
   std::string _latestNodeCol;
   bool _finalGame;
+  bool _lanzaranimationPig;
   Ogre::Camera* _aerialCamera;
   Ogre::Camera* _projectileCamera;
   OgreBulletDynamics::RigidBody* _trackedBody;
@@ -134,6 +135,8 @@ class PlayState : public Ogre::Singleton<PlayState>, public GameState
 
   int _forcePercent;
   int _points;
+
+  std::vector<Ogre::AnimationState*> *_vector_anims_pig;
 
 };
 

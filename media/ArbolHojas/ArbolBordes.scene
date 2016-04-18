@@ -1,0 +1,90 @@
+<scene previous_export_time="1460972179.1749713" exported_by="javimendo" formatVersion="1.0.1" export_time="1460972260.6477563" >
+  <nodes >
+    <node name="Lamp.002" >
+      <position z="4.482822" x="-2.050254" y="6.584392" />
+      <rotation qz="-0.272171" qx="0.169076" qy="0.755880" qw="0.570947" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light shadow="true" powerScale="1.0" type="point" name="Lamp.002" >
+        <position z="4.482822" x="-2.050254" y="6.584392" />
+        <lightAttenuation range="5000" quadratic="0.0" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse r="1.0" b="1.0" g="1.0" />
+        <colourSpecular r="1.0" b="1.0" g="1.0" />
+        <colourShadow r="1.0" b="1.0" g="1.0" />
+      </light>
+    </node>
+    <node name="Lamp.001" >
+      <position z="4.853967" x="5.870460" y="7.248321" />
+      <rotation qz="-0.272171" qx="0.169076" qy="0.755880" qw="0.570947" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light shadow="true" powerScale="1.0" type="point" name="Lamp.001" >
+        <position z="4.853967" x="5.870460" y="7.248321" />
+        <lightAttenuation range="5000" quadratic="0.0" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse r="1.0" b="1.0" g="1.0" />
+        <colourSpecular r="1.0" b="1.0" g="1.0" />
+        <colourShadow r="1.0" b="1.0" g="1.0" />
+      </light>
+    </node>
+    <node name="ArbolHojas" >
+      <position z="-0.000000" x="0.000000" y="0.000000" />
+      <rotation qz="-0.000000" qx="0.000000" qy="0.000000" qw="1.000000" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" velocity_min="0.0" actor="False" name="ArbolHojas" damping_trans="0.03999999910593033" damping_rot="0.10000000149011612" lock_rot_z="False" lock_rot_y="False" lock_rot_x="False" friction_z="1.0" friction_x="1.0" friction_y="1.0" inertia_tensor="0.4000000059604645" mass_radius="1.0" ghost="False" physics_type="STATIC" anisotropic_friction="False" meshFile="ArbolHojas.mesh" velocity_max="0.0" mass="1.0" />
+    </node>
+    <node name="Lamp" >
+      <position z="-1.512058" x="9.187118" y="5.137991" />
+      <rotation qz="-0.272171" qx="0.169076" qy="0.755880" qw="0.570947" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light shadow="true" powerScale="1.0" type="point" name="Lamp" >
+        <position z="-1.512058" x="9.187118" y="5.137991" />
+        <lightAttenuation range="5000" quadratic="0.0" linear="0.03333335240683057" constant="1.0" />
+        <colourDiffuse r="1.0" b="1.0" g="1.0" />
+        <colourSpecular r="1.0" b="1.0" g="1.0" />
+        <colourShadow r="1.0" b="1.0" g="1.0" />
+      </light>
+    </node>
+    <node name="Camera" >
+      <position z="6.507640" x="7.481132" y="8.625500" />
+      <rotation qz="-0.326641" qx="0.526007" qy="0.259003" qw="0.741310" />
+      <scale z="1.000000" x="1.000000" y="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <camera projectionType="perspective" fov="0.5033799435163735" name="Camera" >
+        <clipping farPlaneDist="100.0" near="0.10000000149011612" nearPlaneDist="0.10000000149011612" far="100.0" />
+      </camera>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/home/javimendo/Escritorio/Hunter/media/ArbolHojas/Material.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/javimendo/Escritorio/Hunter/media/ArbolHojas/MarronTronco.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/javimendo/Escritorio/Hunter/media/ArbolHojas/VerdeHoja.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourDiffuse r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+    <colourAmbient r="0.0" b="0.0" g="0.0" />
+    <colourBackground r="0.05087608844041824" b="0.05087608844041824" g="0.05087608844041824" />
+  </environment>
+</scene>

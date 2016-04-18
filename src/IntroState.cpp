@@ -63,7 +63,7 @@ IntroState::frameStarted
 {
   Ogre::Real deltaT = evt.timeSinceLastFrame;
   if (_lanzaranimacion){
-    _animState = _sceneMgr->getEntity("CerdoIni")->getAnimationState("Salto");
+    _animState = _sceneMgr->getEntity("CerdoIni")->getAnimationState("SaltoR");
     _animState->setEnabled(true);
     _animState->setLoop(true);
     _animState->setTimePosition(0.0);
