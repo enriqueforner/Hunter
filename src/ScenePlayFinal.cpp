@@ -24,6 +24,8 @@ void ScenePlayFinal::crearCeguiFinal(){
           CEGUI::Event::Subscriber(&FinalState::exitButtonC, 
                 FinalState::getSingletonPtr())); 
 
+    //CEGUI::Window* puntosplayer = _sheet->getChild("Puntuacion");
+    vent->getChild("PuntosPlayer")->setText(_sheet->getChild("PointsWindow")->getChild("StaticText")->getText());
 }
 
 void ScenePlayFinal::PointsAndPower(){
